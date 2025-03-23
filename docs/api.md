@@ -1,165 +1,228 @@
-# API接口文档
+# TwitchClone API 文档
 
 ## 基础信息
 
-- 基础URL: `/api`
-- 所有API响应格式统一如下:
-  ```json
-  {
-    "success": true/false,
-    "message": "响应消息",
-    "data": {} // 响应数据，成功时返回
-    "error": {} // 错误详情，失败时返回
-  }
-  ```
-
-## 认证相关接口
-
-### 用户注册
-
-**接口地址**: `POST /api/auth/register`
-
-**请求参数**:
-
-| 参数名      | 类型   | 必填 | 描述                 |
-|-------------|--------|------|---------------------|
-| username    | string | 是   | 用户名 (唯一)        |
-| email       | string | 是   | 邮箱地址 (唯一)      |
-| password    | string | 是   | 密码                 |
-| displayName | string | 否   | 显示名称，默认同用户名 |
-
-**请求示例**:
+- 基础URL: `http://localhost:5000/api`
+- 所有响应格式统一为:
 ```json
 {
-  "username": "example_user",
-  "email": "user@example.com",
-  "password": "securePassword123",
-  "displayName": "Example User"
+  "success": true|false,
+  "message": "操作描述",
+  "data": {...} | [...],
+  "timestamp": 1616161616161
 }
 ```
 
-**成功响应** (状态码: 201):
+## 认证接口
+
+### 用户注册
+
+- 请求: `POST /auth/register`
+- 描述: 创建新用户
+- 请求体:
+```json
+{
+  "username": "用户名",
+  "email": "邮箱地址",
+  "password": "密码"
+}
+```
+- 成功响应 (200):
 ```json
 {
   "success": true,
   "message": "注册成功",
   "data": {
-    "token": "eyJhbGciOiJIUzI1NiIsIn...",
     "user": {
-      "id": "5f8a4b5e9c2b1d3a7e6f8c9d",
-      "username": "example_user",
-      "email": "user@example.com",
-      "displayName": "Example User",
-      "avatar": null,
+      "_id": "用户ID",
+      "username": "用户名",
+      "email": "邮箱地址",
+      "avatar": "头像地址",
       "isStreamer": false,
-      "isAdmin": false,
-      "createdAt": "2023-06-20T12:00:00.000Z"
-    }
+      "createdAt": "创建时间"
+    },
+    "token": "JWT令牌"
   }
 }
 ```
 
-**错误响应**:
-- 400: 用户名/邮箱已被使用或缺少必要参数
-- 500: 服务器内部错误
-
 ### 用户登录
 
-**接口地址**: `POST /api/auth/login`
-
-**请求参数**:
-
-| 参数名      | 类型   | 必填 | 描述                 |
-|-------------|--------|------|---------------------|
-| username    | string | 条件性 | 用户名 (用户名和邮箱必须提供一个) |
-| email       | string | 条件性 | 邮箱地址 (用户名和邮箱必须提供一个) |
-| password    | string | 是   | 密码                 |
-
-**请求示例**:
+- 请求: `POST /auth/login`
+- 描述: 用户登录并获取令牌
+- 请求体:
 ```json
 {
-  "username": "example_user",
-  "password": "securePassword123"
+  "email": "邮箱地址",
+  "password": "密码"
 }
 ```
-或
-```json
-{
-  "email": "user@example.com",
-  "password": "securePassword123"
-}
-```
-
-**成功响应** (状态码: 200):
+- 成功响应 (200):
 ```json
 {
   "success": true,
   "message": "登录成功",
   "data": {
-    "token": "eyJhbGciOiJIUzI1NiIsIn...",
     "user": {
-      "id": "5f8a4b5e9c2b1d3a7e6f8c9d",
-      "username": "example_user",
-      "email": "user@example.com",
-      "displayName": "Example User",
-      "avatar": null,
+      "_id": "用户ID",
+      "username": "用户名",
+      "email": "邮箱地址",
+      "avatar": "头像地址",
       "isStreamer": false,
-      "isAdmin": false,
-      "createdAt": "2023-06-20T12:00:00.000Z"
-    }
+      "createdAt": "创建时间"
+    },
+    "token": "JWT令牌"
   }
 }
 ```
-
-**错误响应**:
-- 400: 缺少必要参数
-- 401: 密码错误
-- 404: 用户不存在
-- 500: 服务器内部错误
 
 ### 获取当前用户信息
 
-**接口地址**: `GET /api/auth/me`
-
-**请求头**:
+- 请求: `GET /auth/me`
+- 描述: 获取当前登录用户信息
+- 请求头: 
 ```
 Authorization: Bearer {token}
 ```
-
-**成功响应** (状态码: 200):
+- 成功响应 (200):
 ```json
 {
   "success": true,
-  "message": "获取成功",
+  "message": "获取用户信息成功",
   "data": {
-    "user": {
-      "id": "5f8a4b5e9c2b1d3a7e6f8c9d",
-      "username": "example_user",
-      "email": "user@example.com",
-      "displayName": "Example User",
-      "avatar": null,
-      "bio": "用户简介",
-      "isStreamer": false,
-      "isAdmin": false,
-      "followersCount": 0,
-      "followingCount": 0,
-      "createdAt": "2023-06-20T12:00:00.000Z"
-    }
+    "_id": "用户ID",
+    "username": "用户名",
+    "email": "邮箱地址",
+    "displayName": "显示名称",
+    "avatar": "头像地址",
+    "bio": "个人简介",
+    "isStreamer": false,
+    "createdAt": "创建时间"
   }
 }
 ```
 
-**错误响应**:
-- 401: 未授权访问或令牌过期
-- 404: 用户不存在
-- 500: 服务器内部错误
+## 分类接口
 
-## 认证中间件
+### 获取所有分类
 
-对于需要身份验证的API，请在请求头中添加以下信息:
-
+- 请求: `GET /categories`
+- 描述: 获取所有内容分类
+- 成功响应 (200):
+```json
+{
+  "success": true,
+  "message": "获取分类列表成功",
+  "data": [
+    {
+      "_id": "分类ID",
+      "name": "分类名称",
+      "slug": "分类标识",
+      "description": "分类描述",
+      "coverImage": "封面图片",
+      "viewerCount": 1000,
+      "streamCount": 50
+    },
+    // ...更多分类
+  ]
+}
 ```
-Authorization: Bearer {token}
+
+### 获取热门分类
+
+- 请求: `GET /categories/popular`
+- 描述: 获取热门内容分类
+- 参数: 
+  - `limit`: 返回数量限制 (默认10)
+- 成功响应 (200):
+```json
+{
+  "success": true,
+  "message": "获取热门分类成功",
+  "data": [
+    {
+      "_id": "分类ID",
+      "name": "分类名称",
+      "slug": "分类标识",
+      "description": "分类描述",
+      "coverImage": "封面图片",
+      "viewerCount": 5000,
+      "streamCount": 100
+    },
+    // ...更多热门分类
+  ]
+}
 ```
 
-其中 `{token}` 是通过登录或注册接口获取的JWT令牌。如果令牌无效或过期，API将返回401错误。
+### 根据ID获取分类
+
+- 请求: `GET /categories/:id`
+- 描述: 获取指定ID的分类详情
+- 成功响应 (200):
+```json
+{
+  "success": true,
+  "message": "获取分类详情成功",
+  "data": {
+    "_id": "分类ID",
+    "name": "分类名称",
+    "slug": "分类标识",
+    "description": "分类描述",
+    "coverImage": "封面图片",
+    "viewerCount": 1000,
+    "streamCount": 50
+  }
+}
+```
+
+### 根据slug获取分类
+
+- 请求: `GET /categories/slug/:slug`
+- 描述: 根据slug获取分类详情
+- 成功响应 (200):
+```json
+{
+  "success": true,
+  "message": "获取分类详情成功",
+  "data": {
+    "_id": "分类ID",
+    "name": "分类名称",
+    "slug": "分类标识",
+    "description": "分类描述",
+    "coverImage": "封面图片",
+    "viewerCount": 1000,
+    "streamCount": 50
+  }
+}
+```
+
+## 频道接口
+
+### 获取推荐频道
+
+- 请求: `GET /recommended-channels`
+- 描述: 获取推荐直播频道列表
+- 参数:
+  - `limit`: 返回数量限制 (默认5)
+- 成功响应 (200):
+```json
+{
+  "success": true,
+  "message": "获取推荐频道成功",
+  "data": [
+    {
+      "_id": "直播ID",
+      "user": {
+        "_id": "用户ID",
+        "username": "主播用户名",
+        "avatar": "主播头像"
+      },
+      "title": "直播标题",
+      "isLive": true,
+      "viewerCount": 1200,
+      "startedAt": "开始时间"
+    },
+    // ...更多推荐频道
+  ]
+}
+```
