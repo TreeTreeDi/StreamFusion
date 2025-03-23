@@ -12,6 +12,8 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { useAuth } from "@/contexts/auth-context";
+import { toast } from "sonner";
 
 interface RegisterModalProps {
   isOpen: boolean;
@@ -20,8 +22,10 @@ interface RegisterModalProps {
 }
 
 export function RegisterModal({ isOpen, onClose, onLogin }: RegisterModalProps) {
+  const { register } = useAuth();
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
+  const [displayName, setDisplayName] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -31,22 +35,44 @@ export function RegisterModal({ isOpen, onClose, onLogin }: RegisterModalProps) 
     e.preventDefault();
     setError("");
     
+    // 表单验证
     if (password !== confirmPassword) {
       setError("两次输入的密码不一致");
+      return;
+    }
+
+    if (password.length < 6) {
+      setError("密码至少需要6个字符");
+      return;
+    }
+
+    if (username.length < 3) {
+      setError("用户名至少需要3个字符");
       return;
     }
 
     setIsLoading(true);
 
     try {
-      // 这里将实现注册逻辑
-      console.log("注册", { username, email, password });
+      // 调用注册API
+      const result = await register({ 
+        username, 
+        email, 
+        password,
+        displayName: displayName || username
+      });
       
-      // 成功注册后关闭模态框
-      onClose();
+      if (result.success) {
+        toast.success(result.message);
+        onClose();
+      } else {
+        setError(result.message);
+        toast.error(result.message);
+      }
     } catch (error) {
       console.error("注册失败", error);
       setError("注册失败，请稍后重试");
+      toast.error("注册失败，请稍后重试");
     } finally {
       setIsLoading(false);
     }
@@ -73,12 +99,25 @@ export function RegisterModal({ isOpen, onClose, onLogin }: RegisterModalProps) 
             <Label htmlFor="username">用户名</Label>
             <Input
               id="username"
-              placeholder="请输入用户名"
+              placeholder="请输入用户名（至少3个字符）"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
               disabled={isLoading}
               required
             />
+            <p className="text-xs text-muted-foreground">用户名将用于登录和唯一标识</p>
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="display-name">显示名称（可选）</Label>
+            <Input
+              id="display-name"
+              placeholder="请输入显示名称"
+              value={displayName}
+              onChange={(e) => setDisplayName(e.target.value)}
+              disabled={isLoading}
+            />
+            <p className="text-xs text-muted-foreground">显示名称将显示在您的个人资料和直播间</p>
           </div>
 
           <div className="space-y-2">
@@ -99,7 +138,7 @@ export function RegisterModal({ isOpen, onClose, onLogin }: RegisterModalProps) 
             <Input
               id="register-password"
               type="password"
-              placeholder="请输入密码"
+              placeholder="请输入密码（至少6个字符）"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               disabled={isLoading}

@@ -6,6 +6,9 @@ import cors from 'koa-cors';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 
+// 导入路由
+import authRoutes from './routes/auth.routes';
+
 // 加载环境变量
 dotenv.config();
 
@@ -48,6 +51,9 @@ router.get('/', (ctx) => {
     version: '1.0.0',
   };
 });
+
+// 注册API路由
+app.use(authRoutes.routes()).use(authRoutes.allowedMethods());
 
 // 使用路由
 app.use(router.routes()).use(router.allowedMethods());

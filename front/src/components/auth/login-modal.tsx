@@ -12,6 +12,8 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { useAuth } from "@/contexts/auth-context";
+import { toast } from "sonner";
 
 interface LoginModalProps {
   isOpen: boolean;
@@ -20,7 +22,8 @@ interface LoginModalProps {
 }
 
 export function LoginModal({ isOpen, onClose, onRegister }: LoginModalProps) {
-  const [email, setEmail] = useState("");
+  const { login } = useAuth();
+  const [identifier, setIdentifier] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
@@ -29,13 +32,24 @@ export function LoginModal({ isOpen, onClose, onRegister }: LoginModalProps) {
     setIsLoading(true);
 
     try {
-      // 这里将实现登录逻辑
-      console.log("登录", { email, password });
+      // 判断用户输入的是邮箱还是用户名
+      const isEmail = identifier.includes('@');
+      const loginParams = isEmail 
+        ? { email: identifier, password } 
+        : { username: identifier, password };
+
+      // 调用登录API
+      const result = await login(loginParams);
       
-      // 成功登录后关闭模态框
-      onClose();
+      if (result.success) {
+        toast.success(result.message);
+        onClose();
+      } else {
+        toast.error(result.message);
+      }
     } catch (error) {
       console.error("登录失败", error);
+      toast.error("登录失败，请稍后再试");
     } finally {
       setIsLoading(false);
     }
@@ -53,13 +67,13 @@ export function LoginModal({ isOpen, onClose, onRegister }: LoginModalProps) {
 
         <form onSubmit={handleSubmit} className="space-y-4 pt-4">
           <div className="space-y-2">
-            <Label htmlFor="email">邮箱</Label>
+            <Label htmlFor="identifier">用户名或邮箱</Label>
             <Input
-              id="email"
-              type="email"
-              placeholder="请输入邮箱"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              id="identifier"
+              type="text"
+              placeholder="请输入用户名或邮箱"
+              value={identifier}
+              onChange={(e) => setIdentifier(e.target.value)}
               disabled={isLoading}
               required
             />
