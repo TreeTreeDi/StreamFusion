@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>首页 - 直播平台</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            background-color: #0e0e10;
+            color: #efeff1;
+        }
+        .stream-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
+        }
+        .category-card:hover {
+            transform: scale(1.03);
+        }
+    </style>
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav class="bg-gray-900 p-3 flex items-center justify-between">
+        <div class="flex items-center space-x-8">
+            <div class="text-purple-500 font-bold text-2xl">
+                <i class="fas fa-tv mr-2"></i>直播平台
+            </div>
+            <div class="hidden md:flex space-x-6 text-gray-300">
+                <a href="#" class="hover:text-purple-400 font-medium">首页</a>
+                <a href="#" class="hover:text-purple-400">浏览</a>
+                <a href="#" class="hover:text-purple-400">关注</a>
+            </div>
+        </div>
+        
+        <div class="flex-1 mx-10 hidden md:block">
+            <div class="relative">
+                <input type="text" placeholder="搜索" class="w-full bg-gray-800 text-white px-4 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500">
+                <button class="absolute right-0 top-0 h-full px-4 text-gray-400">
+                    <i class="fas fa-search"></i>
+                </button>
+            </div>
+        </div>
+        
+        <div class="flex items-center space-x-5">
+            <button class="hidden md:block bg-gray-700 hover:bg-gray-600 text-white px-3 py-1 rounded-md">
+                <i class="fas fa-crown mr-1"></i>订阅
+            </button>
+            <a href="#" class="text-gray-300 hover:text-purple-400 relative">
+                <i class="fas fa-bell text-xl"></i>
+                <span class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-4 w-4 flex items-center justify-center">3</span>
+            </a>
+            <a href="#" class="text-gray-300 hover:text-purple-400">
+                <i class="fas fa-inbox text-xl"></i>
+            </a>
+            <div class="w-8 h-8 rounded-full bg-purple-600 overflow-hidden">
+                <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=100&q=80" alt="用户头像" class="w-full h-full object-cover">
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mx-auto px-4 py-6">
+        <!-- 推荐直播 -->
+        <div class="mb-10">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-xl font-bold">推荐直播</h2>
+                <a href="#" class="text-sm text-gray-400 hover:text-purple-400">查看更多</a>
+            </div>
+            
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+                <!-- 直播卡片 1 -->
+                <div class="stream-card bg-gray-800 rounded-md overflow-hidden transition-all duration-300">
+                    <div class="relative">
+                        <img src="https://images.unsplash.com/photo-1511882150382-421056c89033?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80" alt="直播缩略图" class="w-full h-40 object-cover">
+                        <div class="absolute bottom-2 left-2 bg-red-600 text-white text-xs px-1.5 py-0.5 rounded-md flex items-center">
+                            <div class="w-2 h-2 bg-white rounded-full mr-1"></div>
+                            12.5K
+                        </div>
+                    </div>
+                    <div class="p-3">
+                        <div class="flex mb-2">
+                            <div class="w-9 h-9 rounded-full overflow-hidden mr-3">
+                                <img src="https://images.unsplash.com/photo-1527980965255-d3b416303d12?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=100&q=80" alt="主播头像" class="w-full h-full object-cover">
+                            </div>
+                            <div>
+                                <h3 class="font-medium text-md truncate">王者荣耀职业赛事直播</h3>
+                                <p class="text-gray-400 text-sm">游戏解说_小王</p>
+                                <div class="text-gray-400 text-xs mt-1">王者荣耀</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 直播卡片 2 -->
+                <div class="stream-card bg-gray-800 rounded-md overflow-hidden transition-all duration-300">
+                    <div class="relative">
+                        <img src="https://images.unsplash.com/photo-1542751371-adc38448a05e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80" alt="直播缩略图" class="w-full h-40 object-cover">
+                        <div class="absolute bottom-2 left-2 bg-red-600 text-white text-xs px-1.5 py-0.5 rounded-md flex items-center">
+                            <div class="w-2 h-2 bg-white rounded-full mr-1"></div>
+                            8.7K
+                        </div>
+                    </div>
+                    <div class="p-3">
+                        <div class="flex mb-2">
+                            <div class="w-9 h-9 rounded-full overflow-hidden mr-3">
+                                <img src="https://images.unsplash.com/photo-1580489944761-15a19d654956?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=100&q=80" alt="主播头像" class="w-full h-full object-cover">
+                            </div>
+                            <div>
+                                <h3 class="font-medium text-md truncate">英雄联盟排位冲分</h3>
+                                <p class="text-gray-400 text-sm">电竞少女_小美</p>
+                                <div class="text-gray-400 text-xs mt-1">英雄联盟</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 直播卡片 3 -->
+                <div class="stream-card bg-gray-800 rounded-md overflow-hidden transition-all duration-300">
+                    <div class="relative">
+                        <img src="https://images.unsplash.com/photo-1560253023-3ec5d502959f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80" alt="直播缩略图" class="w-full h-40 object-cover">
+                        <div class="absolute bottom-2 left-2 bg-red-600 text-white text-xs px-1.5 py-0.5 rounded-md flex items-center">
+                            <div class="w-2 h-2 bg-white rounded-full mr-1"></div>
+                            5.2K
+                        </div>
+                    </div>
+                    <div class="p-3">
+                        <div class="flex mb-2">
+                            <div class="w-9 h-9 rounded-full overflow-hidden mr-3">
+                                <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=100&q=80" alt="主播头像" class="w-full h-full object-cover">
+                            </div>
+                            <div>
+                                <h3 class="font-medium text-md truncate">吃鸡第一视角教学</h3>
+                                <p class="text-gray-400 text-sm">吃鸡大神_阿龙</p>
+                                <div class="text-gray-400 text-xs mt-1">PUBG</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 直播卡片 4 -->
+                <div class="stream-card bg-gray-800 rounded-md overflow-hidden transition-all duration-300">
+                    <div class="relative">
+                        <img src="https://images.unsplash.com/photo-1603501667226-d6bcef4c566b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80" alt="直播缩略图" class="w-full h-40 object-cover">
+                        <div class="absolute bottom-2 left-2 bg-red-600 text-white text-xs px-1.5 py-0.5 rounded-md flex items-center">
+                            <div class="w-2 h-2 bg-white rounded-full mr-1"></div>
+                            3.8K
+                        </div>
+                    </div>
+                    <div class="p-3">
+                        <div class="flex mb-2">
+                            <div class="w-9 h-9 rounded-full overflow-hidden mr-3">
+                                <img src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=100&q=80" alt="主播头像" class="w-full h-full object-cover">
+                            </div>
+                            <div>
+                                <h3 class="font-medium text-md truncate">和平精英实况解说</h3>
+                                <p class="text-gray-400 text-sm">游戏大咖_老张</p>
+                                <div class="text-gray-400 text-xs mt-1">和平精英</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 热门分类 -->
+        <div class="mb-10">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-xl font-bold">热门分类</h2>
+                <a href="#" class="text-sm text-gray-400 hover:text-purple-400">查看所有</a>
+            </div>
+            
+            <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 xl:grid-cols-6 gap-5">
+                <!-- 分类卡片 1 -->
+                <div class="category-card bg-gray-800 rounded-md overflow-hidden transition-all duration-300">
+                    <img src="https://images.unsplash.com/photo-1542751371-adc38448a05e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80" alt="分类图片" class="w-full h-32 object-cover">
+                    <div class="p-2">
+                        <h3 class="font-medium text-sm">英雄联盟</h3>
+                        <p class="text-gray-400 text-xs">256K 观众</p>
+                    </div>
+                </div>
+                
+                <!-- 分类卡片 2 -->
+                <div class="category-card bg-gray-800 rounded-md overflow-hidden transition-all duration-300">
+                    <img src="https://images.unsplash.com/photo-1511882150382-421056c89033?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80" alt="分类图片" class="w-full h-32 object-cover">
+                    <div class="p-2">
+                        <h3 class="font-medium text-sm">王者荣耀</h3>
+                        <p class="text-gray-400 text-xs">203K 观众</p>
+                    </div>
+                </div>
+                
+                <!-- 分类卡片 3 -->
+                <div class="category-card bg-gray-800 rounded-md overflow-hidden transition-all duration-300">
+                    <img src="https://images.unsplash.com/photo-1603501667226-d6bcef4c566b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80" alt="分类图片" class="w-full h-32 object-cover">
+                    <div class="p-2">
+                        <h3 class="font-medium text-sm">和平精英</h3>
+                        <p class="text-gray-400 text-xs">178K 观众</p>
+                    </div>
+                </div>
+                
+                <!-- 分类卡片 4 -->
+                <div class="category-card bg-gray-800 rounded-md overflow-hidden transition-all duration-300">
+                    <img src="https://images.unsplash.com/photo-1603425013520-e0b30e6e37dc?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80" alt="分类图片" class="w-full h-32 object-cover">
+                    <div class="p-2">
+                        <h3 class="font-medium text-sm">VALORANT</h3>
+                        <p class="text-gray-400 text-xs">145K 观众</p>
+                    </div>
+                </div>
+                
+                <!-- 分类卡片 5 -->
+                <div class="category-card bg-gray-800 rounded-md overflow-hidden transition-all duration-300">
+                    <img src="https://images.unsplash.com/photo-1560253023-3ec5d502959f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80" alt="分类图片" class="w-full h-32 object-cover">
+                    <div class="p-2">
+                        <h3 class="font-medium text-sm">PUBG</h3>
+                        <p class="text-gray-400 text-xs">126K 观众</p>
+                    </div>
+                </div>
+                
+                <!-- 分类卡片 6 -->
+                <div class="category-card bg-gray-800 rounded-md overflow-hidden transition-all duration-300">
+                    <img src="https://images.unsplash.com/photo-1608111283377-a4a87f803e0f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80" alt="分类图片" class="w-full h-32 object-cover">
+                    <div class="p-2">
+                        <h3 class="font-medium text-sm">Apex英雄</h3>
+                        <p class="text-gray-400 text-xs">112K 观众</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 正在关注 -->
+        <div>
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-xl font-bold">您关注的主播</h2>
+                <a href="#" class="text-sm text-gray-400 hover:text-purple-400">管理关注</a>
+            </div>
+            
+            <div class="bg-gray-800 rounded-md overflow-hidden">
+                <!-- 关注主播项 -->
+                <div class="flex items-center p-3 hover:bg-gray-700 cursor-pointer">
+                    <div class="relative mr-3">
+                        <div class="w-10 h-10 rounded-full overflow-hidden">
+                            <img src="https://images.unsplash.com/photo-1527980965255-d3b416303d12?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=100&q=80" alt="主播头像" class="w-full h-full object-cover">
+                        </div>
+                        <div class="absolute -bottom-1 -right-1 w-4 h-4 bg-red-500 rounded-full border-2 border-gray-800"></div>
+                    </div>
+                    <div class="flex-1">
+                        <h3 class="font-medium">游戏解说_小王</h3>
+                        <p class="text-gray-400 text-xs">王者荣耀 - 排位赛解说</p>
+                    </div>
+                    <div class="text-red-500 flex items-center">
+                        <div class="w-2 h-2 bg-red-500 rounded-full mr-1"></div>
+                        <span>12.5K</span>
+                    </div>
+                </div>
+                
+                <div class="flex items-center p-3 hover:bg-gray-700 cursor-pointer">
+                    <div class="relative mr-3">
+                        <div class="w-10 h-10 rounded-full overflow-hidden">
+                            <img src="https://images.unsplash.com/photo-1580489944761-15a19d654956?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=100&q=80" alt="主播头像" class="w-full h-full object-cover">
+                        </div>
+                        <div class="absolute -bottom-1 -right-1 w-4 h-4 bg-red-500 rounded-full border-2 border-gray-800"></div>
+                    </div>
+                    <div class="flex-1">
+                        <h3 class="font-medium">电竞少女_小美</h3>
+                        <p class="text-gray-400 text-xs">英雄联盟 - 排位冲分</p>
+                    </div>
+                    <div class="text-red-500 flex items-center">
+                        <div class="w-2 h-2 bg-red-500 rounded-full mr-1"></div>
+                        <span>8.7K</span>
+                    </div>
+                </div>
+                
+                <div class="flex items-center p-3 hover:bg-gray-700 cursor-pointer opacity-40">
+                    <div class="relative mr-3">
+                        <div class="w-10 h-10 rounded-full overflow-hidden">
+                            <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=100&q=80" alt="主播头像" class="w-full h-full object-cover">
+                        </div>
+                    </div>
+                    <div class="flex-1">
+                        <h3 class="font-medium">吃鸡大神_阿龙</h3>
+                        <p class="text-gray-400 text-xs">离线</p>
+                    </div>
+                </div>
+                
+                <div class="flex items-center p-3 hover:bg-gray-700 cursor-pointer opacity-40">
+                    <div class="relative mr-3">
+                        <div class="w-10 h-10 rounded-full overflow-hidden">
+                            <img src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=100&q=80" alt="主播头像" class="w-full h-full object-cover">
+                        </div>
+                    </div>
+                    <div class="flex-1">
+                        <h3 class="font-medium">游戏大咖_老张</h3>
+                        <p class="text-gray-400 text-xs">离线</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html> 

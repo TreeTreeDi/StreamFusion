@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>直播平台 - 仿Twitch设计</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            background-color: #0e0e10;
+            color: #efeff1;
+        }
+        .page-container {
+            margin-bottom: 40px;
+            border: 1px solid #2a2a2d;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        .page-title {
+            background-color: #18181b;
+            color: #a970ff;
+            padding: 10px 15px;
+            font-weight: bold;
+            border-bottom: 1px solid #2a2a2d;
+        }
+        iframe {
+            border: none;
+            width: 100%;
+            background-color: #0e0e10;
+        }
+    </style>
+</head>
+<body class="p-4 md:p-8">
+    <h1 class="text-3xl font-bold mb-8 text-center text-purple-500">直播平台UI设计预览</h1>
+    
+    <div class="page-container">
+        <div class="page-title">首页 (Home)</div>
+        <iframe src="pages/home.html" height="600"></iframe>
+    </div>
+    
+    <div class="page-container">
+        <div class="page-title">浏览 (Browse)</div>
+        <iframe src="pages/browse.html" height="600"></iframe>
+    </div>
+    
+    <div class="page-container">
+        <div class="page-title">直播间 (Channel)</div>
+        <iframe src="pages/channel.html" height="800"></iframe>
+    </div>
+    
+    <div class="page-container">
+        <div class="page-title">关注 (Following)</div>
+        <iframe src="pages/following.html" height="600"></iframe>
+    </div>
+    
+    <div class="page-container">
+        <div class="page-title">个人资料 (Profile)</div>
+        <iframe src="pages/profile.html" height="600"></iframe>
+    </div>
+</body>
+</html> 

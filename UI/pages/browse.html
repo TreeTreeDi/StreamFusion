@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>浏览 - 直播平台</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            background-color: #0e0e10;
+            color: #efeff1;
+        }
+        .category-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
+        }
+        .tag:hover {
+            background-color: #772ce8;
+        }
+    </style>
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav class="bg-gray-900 p-3 flex items-center justify-between">
+        <div class="flex items-center space-x-8">
+            <div class="text-purple-500 font-bold text-2xl">
+                <i class="fas fa-tv mr-2"></i>直播平台
+            </div>
+            <div class="hidden md:flex space-x-6 text-gray-300">
+                <a href="#" class="hover:text-purple-400">首页</a>
+                <a href="#" class="hover:text-purple-400 font-medium">浏览</a>
+                <a href="#" class="hover:text-purple-400">关注</a>
+            </div>
+        </div>
+        
+        <div class="flex-1 mx-10 hidden md:block">
+            <div class="relative">
+                <input type="text" placeholder="搜索" class="w-full bg-gray-800 text-white px-4 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500">
+                <button class="absolute right-0 top-0 h-full px-4 text-gray-400">
+                    <i class="fas fa-search"></i>
+                </button>
+            </div>
+        </div>
+        
+        <div class="flex items-center space-x-5">
+            <button class="hidden md:block bg-gray-700 hover:bg-gray-600 text-white px-3 py-1 rounded-md">
+                <i class="fas fa-crown mr-1"></i>订阅
+            </button>
+            <a href="#" class="text-gray-300 hover:text-purple-400 relative">
+                <i class="fas fa-bell text-xl"></i>
+                <span class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-4 w-4 flex items-center justify-center">3</span>
+            </a>
+            <a href="#" class="text-gray-300 hover:text-purple-400">
+                <i class="fas fa-inbox text-xl"></i>
+            </a>
+            <div class="w-8 h-8 rounded-full bg-purple-600 overflow-hidden">
+                <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=100&q=80" alt="用户头像" class="w-full h-full object-cover">
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mx-auto px-4 py-6">
+        <!-- 分类导航 -->
+        <div class="mb-8">
+            <div class="flex overflow-x-auto pb-3 space-x-4 scrollbar-hidden">
+                <a href="#" class="flex-shrink-0 bg-purple-600 text-white px-4 py-2 rounded-md flex items-center">
+                    <i class="fas fa-gamepad mr-2"></i>游戏
+                </a>
+                <a href="#" class="flex-shrink-0 bg-gray-800 hover:bg-gray-700 text-white px-4 py-2 rounded-md flex items-center">
+                    <i class="fas fa-music mr-2"></i>音乐
+                </a>
+                <a href="#" class="flex-shrink-0 bg-gray-800 hover:bg-gray-700 text-white px-4 py-2 rounded-md flex items-center">
+                    <i class="fas fa-comments mr-2"></i>聊天
+                </a>
+                <a href="#" class="flex-shrink-0 bg-gray-800 hover:bg-gray-700 text-white px-4 py-2 rounded-md flex items-center">
+                    <i class="fas fa-palette mr-2"></i>艺术
+                </a>
+                <a href="#" class="flex-shrink-0 bg-gray-800 hover:bg-gray-700 text-white px-4 py-2 rounded-md flex items-center">
+                    <i class="fas fa-basketball-ball mr-2"></i>体育
+                </a>
+                <a href="#" class="flex-shrink-0 bg-gray-800 hover:bg-gray-700 text-white px-4 py-2 rounded-md flex items-center">
+                    <i class="fas fa-utensils mr-2"></i>美食
+                </a>
+                <a href="#" class="flex-shrink-0 bg-gray-800 hover:bg-gray-700 text-white px-4 py-2 rounded-md flex items-center">
+                    <i class="fas fa-graduation-cap mr-2"></i>教育
+                </a>
+                <a href="#" class="flex-shrink-0 bg-gray-800 hover:bg-gray-700 text-white px-4 py-2 rounded-md flex items-center">
+                    <i class="fas fa-code mr-2"></i>编程
+                </a>
+            </div>
+        </div>
+        
+        <!-- 标签筛选 -->
+        <div class="mb-8">
+            <h2 class="text-lg font-bold mb-4">热门标签</h2>
+            <div class="flex flex-wrap gap-2">
+                <span class="tag bg-gray-700 hover:bg-purple-500 px-3 py-1 rounded-full text-sm cursor-pointer transition-colors">多人游戏</span>
+                <span class="tag bg-gray-700 hover:bg-purple-500 px-3 py-1 rounded-full text-sm cursor-pointer transition-colors">FPS</span>
+                <span class="tag bg-gray-700 hover:bg-purple-500 px-3 py-1 rounded-full text-sm cursor-pointer transition-colors">MOBA</span>
+                <span class="tag bg-gray-700 hover:bg-purple-500 px-3 py-1 rounded-full text-sm cursor-pointer transition-colors">RPG</span>
+                <span class="tag bg-gray-700 hover:bg-purple-500 px-3 py-1 rounded-full text-sm cursor-pointer transition-colors">竞技</span>
+                <span class="tag bg-gray-700 hover:bg-purple-500 px-3 py-1 rounded-full text-sm cursor-pointer transition-colors">策略</span>
+                <span class="tag bg-gray-700 hover:bg-purple-500 px-3 py-1 rounded-full text-sm cursor-pointer transition-colors">中文</span>
+                <span class="tag bg-gray-700 hover:bg-purple-500 px-3 py-1 rounded-full text-sm cursor-pointer transition-colors">排位赛</span>
+                <span class="tag bg-gray-700 hover:bg-purple-500 px-3 py-1 rounded-full text-sm cursor-pointer transition-colors">电子竞技</span>
+            </div>
+        </div>
+        
+        <!-- 热门游戏分类 -->
+        <div class="mb-10">
+            <h2 class="text-xl font-bold mb-6">热门游戏分类</h2>
+            
+            <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-5">
+                <!-- 游戏分类 1 -->
+                <div class="category-card bg-gray-800 rounded-md overflow-hidden transition-all duration-300">
+                    <div class="relative">
+                        <img src="https://images.unsplash.com/photo-1542751371-adc38448a05e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80" alt="分类图片" class="w-full h-40 object-cover">
+                        <div class="absolute bottom-2 left-2 bg-red-600 text-white text-xs px-1.5 py-0.5 rounded-md">
+                            256K 观众
+                        </div>
+                    </div>
+                    <div class="p-3">
+                        <h3 class="font-medium">英雄联盟</h3>
+                        <div class="flex flex-wrap gap-1 mt-2">
+                            <span class="bg-gray-700 px-2 py-0.5 rounded text-xs">MOBA</span>
+                            <span class="bg-gray-700 px-2 py-0.5 rounded text-xs">多人游戏</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 游戏分类 2 -->
+                <div class="category-card bg-gray-800 rounded-md overflow-hidden transition-all duration-300">
+                    <div class="relative">
+                        <img src="https://images.unsplash.com/photo-1511882150382-421056c89033?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80" alt="分类图片" class="w-full h-40 object-cover">
+                        <div class="absolute bottom-2 left-2 bg-red-600 text-white text-xs px-1.5 py-0.5 rounded-md">
+                            203K 观众
+                        </div>
+                    </div>
+                    <div class="p-3">
+                        <h3 class="font-medium">王者荣耀</h3>
+                        <div class="flex flex-wrap gap-1 mt-2">
+                            <span class="bg-gray-700 px-2 py-0.5 rounded text-xs">MOBA</span>
+                            <span class="bg-gray-700 px-2 py-0.5 rounded text-xs">手游</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 游戏分类 3 -->
+                <div class="category-card bg-gray-800 rounded-md overflow-hidden transition-all duration-300">
+                    <div class="relative">
+                        <img src="https://images.unsplash.com/photo-1560253023-3ec5d502959f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80" alt="分类图片" class="w-full h-40 object-cover">
+                        <div class="absolute bottom-2 left-2 bg-red-600 text-white text-xs px-1.5 py-0.5 rounded-md">
+                            126K 观众
+                        </div>
+                    </div>
+                    <div class="p-3">
+                        <h3 class="font-medium">PUBG</h3>
+                        <div class="flex flex-wrap gap-1 mt-2">
+                            <span class="bg-gray-700 px-2 py-0.5 rounded text-xs">FPS</span>
+                            <span class="bg-gray-700 px-2 py-0.5 rounded text-xs">大逃杀</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 游戏分类 4 -->
+                <div class="category-card bg-gray-800 rounded-md overflow-hidden transition-all duration-300">
+                    <div class="relative">
+                        <img src="https://images.unsplash.com/photo-1603501667226-d6bcef4c566b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80" alt="分类图片" class="w-full h-40 object-cover">
+                        <div class="absolute bottom-2 left-2 bg-red-600 text-white text-xs px-1.5 py-0.5 rounded-md">
+                            178K 观众
+                        </div>
+                    </div>
+                    <div class="p-3">
+                        <h3 class="font-medium">和平精英</h3>
+                        <div class="flex flex-wrap gap-1 mt-2">
+                            <span class="bg-gray-700 px-2 py-0.5 rounded text-xs">FPS</span>
+                            <span class="bg-gray-700 px-2 py-0.5 rounded text-xs">手游</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 游戏分类 5 -->
+                <div class="category-card bg-gray-800 rounded-md overflow-hidden transition-all duration-300">
+                    <div class="relative">
+                        <img src="https://images.unsplash.com/photo-1603425013520-e0b30e6e37dc?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80" alt="分类图片" class="w-full h-40 object-cover">
+                        <div class="absolute bottom-2 left-2 bg-red-600 text-white text-xs px-1.5 py-0.5 rounded-md">
+                            145K 观众
+                        </div>
+                    </div>
+                    <div class="p-3">
+                        <h3 class="font-medium">VALORANT</h3>
+                        <div class="flex flex-wrap gap-1 mt-2">
+                            <span class="bg-gray-700 px-2 py-0.5 rounded text-xs">FPS</span>
+                            <span class="bg-gray-700 px-2 py-0.5 rounded text-xs">策略</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 游戏分类 6 -->
+                <div class="category-card bg-gray-800 rounded-md overflow-hidden transition-all duration-300">
+                    <div class="relative">
+                        <img src="https://images.unsplash.com/photo-1586182987320-4f17ed1a09d9?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80" alt="分类图片" class="w-full h-40 object-cover">
+                        <div class="absolute bottom-2 left-2 bg-red-600 text-white text-xs px-1.5 py-0.5 rounded-md">
+                            98K 观众
+                        </div>
+                    </div>
+                    <div class="p-3">
+                        <h3 class="font-medium">CS:GO</h3>
+                        <div class="flex flex-wrap gap-1 mt-2">
+                            <span class="bg-gray-700 px-2 py-0.5 rounded text-xs">FPS</span>
+                            <span class="bg-gray-700 px-2 py-0.5 rounded text-xs">电子竞技</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 游戏分类 7 -->
+                <div class="category-card bg-gray-800 rounded-md overflow-hidden transition-all duration-300">
+                    <div class="relative">
+                        <img src="https://images.unsplash.com/photo-1608111283377-a4a87f803e0f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80" alt="分类图片" class="w-full h-40 object-cover">
+                        <div class="absolute bottom-2 left-2 bg-red-600 text-white text-xs px-1.5 py-0.5 rounded-md">
+                            112K 观众
+                        </div>
+                    </div>
+                    <div class="p-3">
+                        <h3 class="font-medium">Apex英雄</h3>
+                        <div class="flex flex-wrap gap-1 mt-2">
+                            <span class="bg-gray-700 px-2 py-0.5 rounded text-xs">FPS</span>
+                            <span class="bg-gray-700 px-2 py-0.5 rounded text-xs">大逃杀</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 游戏分类 8 -->
+                <div class="category-card bg-gray-800 rounded-md overflow-hidden transition-all duration-300">
+                    <div class="relative">
+                        <img src="https://images.unsplash.com/photo-1579373903781-fd5c0c30c4cd?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80" alt="分类图片" class="w-full h-40 object-cover">
+                        <div class="absolute bottom-2 left-2 bg-red-600 text-white text-xs px-1.5 py-0.5 rounded-md">
+                            87K 观众
+                        </div>
+                    </div>
+                    <div class="p-3">
+                        <h3 class="font-medium">Dota 2</h3>
+                        <div class="flex flex-wrap gap-1 mt-2">
+                            <span class="bg-gray-700 px-2 py-0.5 rounded text-xs">MOBA</span>
+                            <span class="bg-gray-700 px-2 py-0.5 rounded text-xs">电子竞技</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 游戏分类 9 -->
+                <div class="category-card bg-gray-800 rounded-md overflow-hidden transition-all duration-300">
+                    <div class="relative">
+                        <img src="https://images.unsplash.com/photo-1550745165-9bc0b252726f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80" alt="分类图片" class="w-full h-40 object-cover">
+                        <div class="absolute bottom-2 left-2 bg-red-600 text-white text-xs px-1.5 py-0.5 rounded-md">
+                            75K 观众
+                        </div>
+                    </div>
+                    <div class="p-3">
+                        <h3 class="font-medium">Minecraft</h3>
+                        <div class="flex flex-wrap gap-1 mt-2">
+                            <span class="bg-gray-700 px-2 py-0.5 rounded text-xs">沙盒</span>
+                            <span class="bg-gray-700 px-2 py-0.5 rounded text-xs">多人游戏</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 游戏分类 10 -->
+                <div class="category-card bg-gray-800 rounded-md overflow-hidden transition-all duration-300">
+                    <div class="relative">
+                        <img src="https://images.unsplash.com/photo-1493711662062-fa541adb3fc8?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80" alt="分类图片" class="w-full h-40 object-cover">
+                        <div class="absolute bottom-2 left-2 bg-red-600 text-white text-xs px-1.5 py-0.5 rounded-md">
+                            68K 观众
+                        </div>
+                    </div>
+                    <div class="p-3">
+                        <h3 class="font-medium">星际争霸 II</h3>
+                        <div class="flex flex-wrap gap-1 mt-2">
+                            <span class="bg-gray-700 px-2 py-0.5 rounded text-xs">RTS</span>
+                            <span class="bg-gray-700 px-2 py-0.5 rounded text-xs">策略</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 分页 -->
+        <div class="flex justify-center">
+            <div class="flex space-x-2">
+                <a href="#" class="bg-gray-700 hover:bg-gray-600 text-white px-4 py-2 rounded-md">上一页</a>
+                <a href="#" class="bg-purple-600 text-white px-4 py-2 rounded-md">1</a>
+                <a href="#" class="bg-gray-700 hover:bg-gray-600 text-white px-4 py-2 rounded-md">2</a>
+                <a href="#" class="bg-gray-700 hover:bg-gray-600 text-white px-4 py-2 rounded-md">3</a>
+                <a href="#" class="bg-gray-700 hover:bg-gray-600 text-white px-4 py-2 rounded-md">下一页</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html> 

@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>直播间 - 直播平台</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            background-color: #0e0e10;
+            color: #efeff1;
+        }
+        .chat-message:hover {
+            background-color: rgba(255, 255, 255, 0.05);
+        }
+        .emote:hover {
+            transform: scale(1.2);
+        }
+    </style>
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav class="bg-gray-900 p-3 flex items-center justify-between">
+        <div class="flex items-center space-x-8">
+            <div class="text-purple-500 font-bold text-2xl">
+                <i class="fas fa-tv mr-2"></i>直播平台
+            </div>
+            <div class="hidden md:flex space-x-6 text-gray-300">
+                <a href="#" class="hover:text-purple-400">首页</a>
+                <a href="#" class="hover:text-purple-400">浏览</a>
+                <a href="#" class="hover:text-purple-400">关注</a>
+            </div>
+        </div>
+        
+        <div class="flex-1 mx-10 hidden md:block">
+            <div class="relative">
+                <input type="text" placeholder="搜索" class="w-full bg-gray-800 text-white px-4 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500">
+                <button class="absolute right-0 top-0 h-full px-4 text-gray-400">
+                    <i class="fas fa-search"></i>
+                </button>
+            </div>
+        </div>
+        
+        <div class="flex items-center space-x-5">
+            <button class="hidden md:block bg-gray-700 hover:bg-gray-600 text-white px-3 py-1 rounded-md">
+                <i class="fas fa-crown mr-1"></i>订阅
+            </button>
+            <a href="#" class="text-gray-300 hover:text-purple-400 relative">
+                <i class="fas fa-bell text-xl"></i>
+                <span class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-4 w-4 flex items-center justify-center">3</span>
+            </a>
+            <a href="#" class="text-gray-300 hover:text-purple-400">
+                <i class="fas fa-inbox text-xl"></i>
+            </a>
+            <div class="w-8 h-8 rounded-full bg-purple-600 overflow-hidden">
+                <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=100&q=80" alt="用户头像" class="w-full h-full object-cover">
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mx-auto px-4 py-6">
+        <div class="flex flex-col lg:flex-row gap-4">
+            <!-- 左侧内容区 -->
+            <div class="lg:w-3/4">
+                <!-- 直播视频 -->
+                <div class="bg-black rounded-md overflow-hidden mb-4 relative" style="padding-top: 56.25%;">
+                    <div class="absolute inset-0 flex items-center justify-center">
+                        <img src="https://images.unsplash.com/photo-1542751371-adc38448a05e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1200&q=80" alt="直播画面" class="w-full h-full object-cover">
+                        
+                        <!-- 控制栏 -->
+                        <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black to-transparent px-4 py-3">
+                            <div class="flex justify-between items-center">
+                                <div class="flex items-center space-x-4">
+                                    <button class="text-white hover:text-purple-400">
+                                        <i class="fas fa-play text-xl"></i>
+                                    </button>
+                                    <div class="text-white">
+                                        <span>01:23:45</span>
+                                    </div>
+                                </div>
+                                <div class="flex items-center space-x-4">
+                                    <button class="text-white hover:text-purple-400">
+                                        <i class="fas fa-cog"></i>
+                                    </button>
+                                    <button class="text-white hover:text-purple-400">
+                                        <i class="fas fa-expand"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="mt-2 relative">
+                                <div class="h-1 bg-gray-600 rounded-full overflow-hidden">
+                                    <div class="h-full w-2/3 bg-purple-500"></div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- 在线人数和直播状态 -->
+                        <div class="absolute top-4 left-4">
+                            <div class="flex items-center bg-red-600 text-white px-2 py-1 rounded-md text-sm">
+                                <div class="w-2 h-2 bg-white rounded-full mr-1"></div>
+                                直播中 · 12.5K 观众
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 直播信息 -->
+                <div class="bg-gray-800 rounded-md p-4 mb-6">
+                    <div class="flex items-start">
+                        <div class="flex-1">
+                            <h1 class="text-xl font-bold mb-2">英雄联盟排位冲分 - 钻石晋级赛</h1>
+                            <div class="flex items-center text-gray-400 text-sm mb-4">
+                                <span class="mr-3">英雄联盟</span>
+                                <span>10,345 观看</span>
+                            </div>
+                            <div class="flex flex-wrap gap-2 mb-4">
+                                <span class="bg-gray-700 px-2 py-1 rounded text-xs">MOBA</span>
+                                <span class="bg-gray-700 px-2 py-1 rounded text-xs">排位赛</span>
+                                <span class="bg-gray-700 px-2 py-1 rounded text-xs">中文</span>
+                            </div>
+                        </div>
+                        <div class="flex space-x-2">
+                            <button class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-md flex items-center">
+                                <i class="fas fa-heart mr-2"></i>关注
+                            </button>
+                            <button class="bg-gray-700 hover:bg-gray-600 text-white px-4 py-2 rounded-md flex items-center">
+                                <i class="fas fa-bell mr-2"></i>订阅
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 主播信息 -->
+                <div class="bg-gray-800 rounded-md p-4 mb-6">
+                    <div class="flex items-center">
+                        <div class="w-12 h-12 rounded-full overflow-hidden mr-4">
+                            <img src="https://images.unsplash.com/photo-1580489944761-15a19d654956?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=100&q=80" alt="主播头像" class="w-full h-full object-cover">
+                        </div>
+                        <div class="flex-1">
+                            <div class="flex items-center">
+                                <h2 class="font-bold text-lg mr-2">电竞少女_小美</h2>
+                                <span class="bg-purple-600 text-white text-xs px-1.5 py-0.5 rounded">认证主播</span>
+                            </div>
+                            <p class="text-gray-400 text-sm mt-1">87.5K 粉丝</p>
+                        </div>
+                        <button class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-md">
+                            关注
+                        </button>
+                    </div>
+                    <div class="mt-4">
+                        <p class="text-sm text-gray-300">英雄联盟高分玩家，擅长中单位置。每日直播时间19:00-23:00，周末全天。欢迎大家来一起玩游戏~</p>
+                    </div>
+                </div>
+                
+                <!-- 推荐直播 -->
+                <div>
+                    <h2 class="text-xl font-bold mb-4">您可能也喜欢</h2>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                        <!-- 推荐直播 1 -->
+                        <div class="bg-gray-800 rounded-md overflow-hidden cursor-pointer hover:bg-gray-700 transition-colors">
+                            <div class="relative">
+                                <img src="https://images.unsplash.com/photo-1511882150382-421056c89033?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80" alt="推荐直播" class="w-full h-32 object-cover">
+                                <div class="absolute bottom-2 left-2 bg-red-600 text-white text-xs px-1.5 py-0.5 rounded-md flex items-center">
+                                    <div class="w-1.5 h-1.5 bg-white rounded-full mr-1"></div>
+                                    7.2K
+                                </div>
+                            </div>
+                            <div class="p-2">
+                                <h3 class="font-medium text-sm truncate">王者荣耀职业赛事解说</h3>
+                                <p class="text-gray-400 text-xs">游戏解说_小王</p>
+                            </div>
+                        </div>
+                        
+                        <!-- 推荐直播 2 -->
+                        <div class="bg-gray-800 rounded-md overflow-hidden cursor-pointer hover:bg-gray-700 transition-colors">
+                            <div class="relative">
+                                <img src="https://images.unsplash.com/photo-1560253023-3ec5d502959f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80" alt="推荐直播" class="w-full h-32 object-cover">
+                                <div class="absolute bottom-2 left-2 bg-red-600 text-white text-xs px-1.5 py-0.5 rounded-md flex items-center">
+                                    <div class="w-1.5 h-1.5 bg-white rounded-full mr-1"></div>
+                                    5.8K
+                                </div>
+                            </div>
+                            <div class="p-2">
+                                <h3 class="font-medium text-sm truncate">PUBG亚洲邀请赛</h3>
+                                <p class="text-gray-400 text-xs">电竞赛事频道</p>
+                            </div>
+                        </div>
+                        
+                        <!-- 推荐直播 3 -->
+                        <div class="bg-gray-800 rounded-md overflow-hidden cursor-pointer hover:bg-gray-700 transition-colors">
+                            <div class="relative">
+                                <img src="https://images.unsplash.com/photo-1603501667226-d6bcef4c566b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80" alt="推荐直播" class="w-full h-32 object-cover">
+                                <div class="absolute bottom-2 left-2 bg-red-600 text-white text-xs px-1.5 py-0.5 rounded-md flex items-center">
+                                    <div class="w-1.5 h-1.5 bg-white rounded-full mr-1"></div>
+                                    3.4K
+                                </div>
+                            </div>
+                            <div class="p-2">
+                                <h3 class="font-medium text-sm truncate">和平精英实况教学</h3>
+                                <p class="text-gray-400 text-xs">游戏大咖_老张</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 右侧聊天区 -->
+            <div class="lg:w-1/4 bg-gray-800 rounded-md overflow-hidden flex flex-col h-auto lg:h-[calc(100vh-120px)] sticky top-4">
+                <!-- 聊天标签和设置 -->
+                <div class="flex items-center justify-between bg-gray-900 p-3 border-b border-gray-700">
+                    <div class="flex items-center space-x-3">
+                        <span class="font-medium">聊天室</span>
+                        <span class="text-gray-400 text-sm">12.5K 人</span>
+                    </div>
+                    <div>
+                        <button class="text-gray-400 hover:text-white">
+                            <i class="fas fa-cog"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- 聊天内容 -->
+                <div class="flex-1 overflow-y-auto p-3 space-y-3" style="height: 400px;">
+                    <!-- 聊天消息 1 -->
+                    <div class="chat-message p-1 rounded hover:bg-gray-700">
+                        <div class="flex">
+                            <span class="font-medium text-purple-400 mr-2">房管_大大:</span>
+                            <span>欢迎来到小美的直播间，请大家文明发言~</span>
+                        </div>
+                    </div>
+                    
+                    <!-- 聊天消息 2 -->
+                    <div class="chat-message p-1 rounded hover:bg-gray-700">
+                        <div class="flex">
+                            <span class="font-medium text-green-400 mr-2">订阅者_小明:</span>
+                            <span>主播好厉害！这个操作太秀了</span>
+                        </div>
+                    </div>
+                    
+                    <!-- 聊天消息 3 -->
+                    <div class="chat-message p-1 rounded hover:bg-gray-700">
+                        <div class="flex">
+                            <span class="font-medium text-blue-400 mr-2">游客1234:</span>
+                            <span>小美小美，教一下这个英雄怎么玩呗</span>
+                        </div>
+                    </div>
+                    
+                    <!-- 聊天消息 4 - 礼物提醒 -->
+                    <div class="bg-gray-700 p-2 rounded text-center">
+                        <div class="flex items-center justify-center">
+                            <img src="https://images.unsplash.com/photo-1513151233558-d860c5398176?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=50&q=80" alt="礼物" class="w-6 h-6 mr-2">
+                            <span class="text-yellow-400 font-medium">顶级粉丝_阿强</span>
+                            <span class="mx-1">送出</span>
+                            <span class="text-pink-400">超级火箭 x1</span>
+                        </div>
+                    </div>
+                    
+                    <!-- 聊天消息 5 -->
+                    <div class="chat-message p-1 rounded hover:bg-gray-700">
+                        <div class="flex">
+                            <span class="font-medium text-red-400 mr-2">超级VIP_大佬:</span>
+                            <span>主播加油，我永远支持你！</span>
+                        </div>
+                    </div>
+                    
+                    <!-- 聊天消息 6 -->
+                    <div class="chat-message p-1 rounded hover:bg-gray-700">
+                        <div class="flex">
+                            <span class="font-medium text-blue-400 mr-2">新手玩家:</span>
+                            <span>这把感觉要赢了，主播操作太流畅了</span>
+                        </div>
+                    </div>
+                    
+                    <!-- 聊天消息 7 -->
+                    <div class="chat-message p-1 rounded hover:bg-gray-700">
+                        <div class="flex">
+                            <span class="font-medium text-green-400 mr-2">订阅者_小李:</span>
+                            <span>主播能教一下这个英雄的出装吗？</span>
+                        </div>
+                    </div>
+                    
+                    <!-- 聊天消息 8 -->
+                    <div class="chat-message p-1 rounded hover:bg-gray-700">
+                        <div class="flex">
+                            <span class="font-medium text-purple-400 mr-2">房管_小黑:</span>
+                            <span>大家有问题可以在这里提问，主播会抽空回答的</span>
+                        </div>
+                    </div>
+                    
+                    <!-- 系统通知 -->
+                    <div class="text-center text-gray-500 text-sm">
+                        --- 欢迎 顶级粉丝_阿强 进入直播间 ---
+                    </div>
+                    
+                    <!-- 聊天消息 9 -->
+                    <div class="chat-message p-1 rounded hover:bg-gray-700">
+                        <div class="flex">
+                            <span class="font-medium text-yellow-400 mr-2">顶级粉丝_阿强:</span>
+                            <span>主播好！今天状态怎么样？</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 表情包选择 -->
+                <div class="p-3 border-t border-gray-700 flex overflow-x-auto">
+                    <div class="flex space-x-2">
+                        <div class="emote w-8 h-8 bg-gray-700 rounded cursor-pointer transition-transform flex items-center justify-center">
+                            <span class="text-xl">👍</span>
+                        </div>
+                        <div class="emote w-8 h-8 bg-gray-700 rounded cursor-pointer transition-transform flex items-center justify-center">
+                            <span class="text-xl">❤️</span>
+                        </div>
+                        <div class="emote w-8 h-8 bg-gray-700 rounded cursor-pointer transition-transform flex items-center justify-center">
+                            <span class="text-xl">😂</span>
+                        </div>
+                        <div class="emote w-8 h-8 bg-gray-700 rounded cursor-pointer transition-transform flex items-center justify-center">
+                            <span class="text-xl">🎮</span>
+                        </div>
+                        <div class="emote w-8 h-8 bg-gray-700 rounded cursor-pointer transition-transform flex items-center justify-center">
+                            <span class="text-xl">🔥</span>
+                        </div>
+                        <div class="emote w-8 h-8 bg-gray-700 rounded cursor-pointer transition-transform flex items-center justify-center">
+                            <span class="text-xl">😍</span>
+                        </div>
+                        <div class="emote w-8 h-8 bg-gray-700 hover:bg-gray-600 rounded cursor-pointer transition-transform flex items-center justify-center">
+                            <i class="fas fa-plus text-sm"></i>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 聊天输入框 -->
+                <div class="p-3 border-t border-gray-700">
+                    <div class="relative">
+                        <input type="text" placeholder="发送消息..." class="w-full bg-gray-900 text-white px-4 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500">
+                        <button class="absolute right-2 top-1/2 transform -translate-y-1/2 text-purple-500 hover:text-purple-400">
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
+                    </div>
+                    <div class="mt-2 text-xs text-gray-500">
+                        只有关注主播才能发言，请先关注 <a href="#" class="text-purple-400 hover:underline">关注主播</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html> 

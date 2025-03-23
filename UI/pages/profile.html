@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>个人资料 - 直播平台</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            background-color: #0e0e10;
+            color: #efeff1;
+        }
+        .tab-active {
+            color: #a970ff;
+            border-bottom: 2px solid #a970ff;
+        }
+        .video-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
+        }
+    </style>
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav class="bg-gray-900 p-3 flex items-center justify-between">
+        <div class="flex items-center space-x-8">
+            <div class="text-purple-500 font-bold text-2xl">
+                <i class="fas fa-tv mr-2"></i>直播平台
+            </div>
+            <div class="hidden md:flex space-x-6 text-gray-300">
+                <a href="#" class="hover:text-purple-400">首页</a>
+                <a href="#" class="hover:text-purple-400">浏览</a>
+                <a href="#" class="hover:text-purple-400">关注</a>
+            </div>
+        </div>
+        
+        <div class="flex-1 mx-10 hidden md:block">
+            <div class="relative">
+                <input type="text" placeholder="搜索" class="w-full bg-gray-800 text-white px-4 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500">
+                <button class="absolute right-0 top-0 h-full px-4 text-gray-400">
+                    <i class="fas fa-search"></i>
+                </button>
+            </div>
+        </div>
+        
+        <div class="flex items-center space-x-5">
+            <button class="hidden md:block bg-gray-700 hover:bg-gray-600 text-white px-3 py-1 rounded-md">
+                <i class="fas fa-crown mr-1"></i>订阅
+            </button>
+            <a href="#" class="text-gray-300 hover:text-purple-400 relative">
+                <i class="fas fa-bell text-xl"></i>
+                <span class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-4 w-4 flex items-center justify-center">3</span>
+            </a>
+            <a href="#" class="text-gray-300 hover:text-purple-400">
+                <i class="fas fa-inbox text-xl"></i>
+            </a>
+            <div class="w-8 h-8 rounded-full bg-purple-600 overflow-hidden">
+                <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=100&q=80" alt="用户头像" class="w-full h-full object-cover">
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mx-auto px-4 py-6">
+        <!-- 用户资料卡片 -->
+        <div class="bg-gray-800 rounded-md overflow-hidden mb-8">
+            <div class="bg-cover bg-center h-40" style="background-image: url('https://images.unsplash.com/photo-1579546929518-9e396f3cc809?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1200&q=80')"></div>
+            <div class="p-6 relative">
+                <div class="absolute -top-12 left-6 w-24 h-24 rounded-full bg-gray-800 p-1">
+                    <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=200&q=80" alt="用户头像" class="w-full h-full rounded-full object-cover">
+                </div>
+                <div class="ml-28">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h1 class="text-2xl font-bold">用户_小明</h1>
+                            <div class="flex items-center mt-1 space-x-2">
+                                <span class="bg-purple-600 text-white text-xs px-1.5 py-0.5 rounded">高级会员</span>
+                                <span class="text-gray-400 text-sm">ID: 12345678</span>
+                            </div>
+                        </div>
+                        <div>
+                            <button class="bg-gray-700 hover:bg-gray-600 text-white px-4 py-2 rounded-md">
+                                <i class="fas fa-cog mr-2"></i>编辑资料
+                            </button>
+                        </div>
+                    </div>
+                    <div class="flex mt-4 space-x-4">
+                        <div>
+                            <span class="text-gray-400">关注</span>
+                            <span class="ml-2 font-medium">32</span>
+                        </div>
+                        <div>
+                            <span class="text-gray-400">粉丝</span>
+                            <span class="ml-2 font-medium">128</span>
+                        </div>
+                        <div>
+                            <span class="text-gray-400">观看时长</span>
+                            <span class="ml-2 font-medium">352小时</span>
+                        </div>
+                    </div>
+                    <div class="mt-4">
+                        <p class="text-gray-300">热爱游戏的普通玩家，喜欢FPS和MOBA类游戏。平时也会看一些音乐和聊天类直播。</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 内容标签页 -->
+        <div class="mb-8">
+            <div class="flex border-b border-gray-700">
+                <button class="px-4 py-2 font-medium tab-active">视频</button>
+                <button class="px-4 py-2 font-medium text-gray-400 hover:text-gray-200">收藏</button>
+                <button class="px-4 py-2 font-medium text-gray-400 hover:text-gray-200">关注</button>
+                <button class="px-4 py-2 font-medium text-gray-400 hover:text-gray-200">粉丝</button>
+                <button class="px-4 py-2 font-medium text-gray-400 hover:text-gray-200">订阅</button>
+            </div>
+        </div>
+        
+        <!-- 视频内容 -->
+        <div>
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-xl font-bold">我的视频</h2>
+                <button class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-md">
+                    <i class="fas fa-upload mr-2"></i>上传视频
+                </button>
+            </div>
+            
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                <!-- 视频卡片 1 -->
+                <div class="video-card bg-gray-800 rounded-md overflow-hidden transition-all duration-300">
+                    <div class="relative">
+                        <img src="https://images.unsplash.com/photo-1560253023-3ec5d502959f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80" alt="视频缩略图" class="w-full h-40 object-cover">
+                        <div class="absolute bottom-2 right-2 bg-black bg-opacity-70 text-white text-xs px-1.5 py-0.5 rounded-md">
+                            15:23
+                        </div>
+                    </div>
+                    <div class="p-3">
+                        <h3 class="font-medium truncate">PUBG精彩集锦 #1</h3>
+                        <div class="flex justify-between items-center mt-2 text-gray-400 text-xs">
+                            <span>3天前</span>
+                            <div class="flex items-center space-x-2">
+                                <div class="flex items-center">
+                                    <i class="fas fa-eye mr-1"></i>
+                                    <span>1.2K</span>
+                                </div>
+                                <div class="flex items-center">
+                                    <i class="fas fa-heart mr-1"></i>
+                                    <span>45</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 视频卡片 2 -->
+                <div class="video-card bg-gray-800 rounded-md overflow-hidden transition-all duration-300">
+                    <div class="relative">
+                        <img src="https://images.unsplash.com/photo-1542751371-adc38448a05e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80" alt="视频缩略图" class="w-full h-40 object-cover">
+                        <div class="absolute bottom-2 right-2 bg-black bg-opacity-70 text-white text-xs px-1.5 py-0.5 rounded-md">
+                            08:47
+                        </div>
+                    </div>
+                    <div class="p-3">
+                        <h3 class="font-medium truncate">英雄联盟五杀时刻</h3>
+                        <div class="flex justify-between items-center mt-2 text-gray-400 text-xs">
+                            <span>1周前</span>
+                            <div class="flex items-center space-x-2">
+                                <div class="flex items-center">
+                                    <i class="fas fa-eye mr-1"></i>
+                                    <span>3.5K</span>
+                                </div>
+                                <div class="flex items-center">
+                                    <i class="fas fa-heart mr-1"></i>
+                                    <span>78</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 视频卡片 3 -->
+                <div class="video-card bg-gray-800 rounded-md overflow-hidden transition-all duration-300">
+                    <div class="relative">
+                        <img src="https://images.unsplash.com/photo-1585620385456-4759f9b5c7d9?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80" alt="视频缩略图" class="w-full h-40 object-cover">
+                        <div class="absolute bottom-2 right-2 bg-black bg-opacity-70 text-white text-xs px-1.5 py-0.5 rounded-md">
+                            12:05
+                        </div>
+                    </div>
+                    <div class="p-3">
+                        <h3 class="font-medium truncate">游戏音乐合集 - 放松时刻</h3>
+                        <div class="flex justify-between items-center mt-2 text-gray-400 text-xs">
+                            <span>2周前</span>
+                            <div class="flex items-center space-x-2">
+                                <div class="flex items-center">
+                                    <i class="fas fa-eye mr-1"></i>
+                                    <span>876</span>
+                                </div>
+                                <div class="flex items-center">
+                                    <i class="fas fa-heart mr-1"></i>
+                                    <span>32</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 视频卡片 4 -->
+                <div class="video-card bg-gray-800 rounded-md overflow-hidden transition-all duration-300">
+                    <div class="relative">
+                        <img src="https://images.unsplash.com/photo-1511512578047-dfb367046420?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80" alt="视频缩略图" class="w-full h-40 object-cover">
+                        <div class="absolute bottom-2 right-2 bg-black bg-opacity-70 text-white text-xs px-1.5 py-0.5 rounded-md">
+                            23:17
+                        </div>
+                    </div>
+                    <div class="p-3">
+                        <h3 class="font-medium truncate">和平精英吃鸡教学</h3>
+                        <div class="flex justify-between items-center mt-2 text-gray-400 text-xs">
+                            <span>1个月前</span>
+                            <div class="flex items-center space-x-2">
+                                <div class="flex items-center">
+                                    <i class="fas fa-eye mr-1"></i>
+                                    <span>5.2K</span>
+                                </div>
+                                <div class="flex items-center">
+                                    <i class="fas fa-heart mr-1"></i>
+                                    <span>124</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 分页 -->
+            <div class="flex justify-center mt-8">
+                <div class="flex space-x-2">
+                    <a href="#" class="bg-gray-700 hover:bg-gray-600 text-white px-4 py-2 rounded-md">上一页</a>
+                    <a href="#" class="bg-purple-600 text-white px-4 py-2 rounded-md">1</a>
+                    <a href="#" class="bg-gray-700 hover:bg-gray-600 text-white px-4 py-2 rounded-md">2</a>
+                    <a href="#" class="bg-gray-700 hover:bg-gray-600 text-white px-4 py-2 rounded-md">3</a>
+                    <a href="#" class="bg-gray-700 hover:bg-gray-600 text-white px-4 py-2 rounded-md">下一页</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 底部信息 -->
+    <footer class="bg-gray-900 text-gray-400 mt-16 py-8">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div>
+                    <h3 class="text-lg font-medium text-white mb-4">关于我们</h3>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="hover:text-purple-400">公司介绍</a></li>
+                        <li><a href="#" class="hover:text-purple-400">招贤纳士</a></li>
+                        <li><a href="#" class="hover:text-purple-400">联系我们</a></li>
+                        <li><a href="#" class="hover:text-purple-400">新闻资讯</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-lg font-medium text-white mb-4">内容政策</h3>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="hover:text-purple-400">社区准则</a></li>
+                        <li><a href="#" class="hover:text-purple-400">服务条款</a></li>
+                        <li><a href="#" class="hover:text-purple-400">隐私政策</a></li>
+                        <li><a href="#" class="hover:text-purple-400">版权声明</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-lg font-medium text-white mb-4">资源</h3>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="hover:text-purple-400">创作者中心</a></li>
+                        <li><a href="#" class="hover:text-purple-400">帮助中心</a></li>
+                        <li><a href="#" class="hover:text-purple-400">开发者平台</a></li>
+                        <li><a href="#" class="hover:text-purple-400">广告投放</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-lg font-medium text-white mb-4">关注我们</h3>
+                    <div class="flex space-x-4 mb-4">
+                        <a href="#" class="text-2xl hover:text-purple-400"><i class="fab fa-weixin"></i></a>
+                        <a href="#" class="text-2xl hover:text-purple-400"><i class="fab fa-weibo"></i></a>
+                        <a href="#" class="text-2xl hover:text-purple-400"><i class="fab fa-qq"></i></a>
+                        <a href="#" class="text-2xl hover:text-purple-400"><i class="fab fa-bilibili"></i></a>
+                    </div>
+                    <div>
+                        <p>客服电话：400-123-4567</p>
+                        <p>邮箱：support@livestream.com</p>
+                    </div>
+                </div>
+            </div>
+            <div class="border-t border-gray-800 mt-8 pt-6 text-center">
+                <p>© 2023 直播平台 保留所有权利</p>
+                <p class="text-sm mt-2">网络文化经营许可证 京ICP备12345678号-1</p>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>
