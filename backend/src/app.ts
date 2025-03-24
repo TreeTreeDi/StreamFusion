@@ -10,6 +10,7 @@ import dotenv from 'dotenv';
 import authRoutes from './routes/auth.routes';
 import categoryRoutes from './routes/category.routes';
 import channelRoutes from './routes/channel.routes';
+import bannerRoutes from './routes/banner.routes';
 
 // 加载环境变量
 dotenv.config();
@@ -58,6 +59,7 @@ router.get('/', (ctx) => {
 app.use(authRoutes.routes()).use(authRoutes.allowedMethods());
 app.use(categoryRoutes.routes()).use(categoryRoutes.allowedMethods());
 app.use(channelRoutes.routes()).use(channelRoutes.allowedMethods());
+app.use(bannerRoutes.routes()).use(bannerRoutes.allowedMethods());
 
 // 使用路由
 app.use(router.routes()).use(router.allowedMethods());

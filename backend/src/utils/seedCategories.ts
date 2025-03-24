@@ -2,6 +2,7 @@ import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import Category from '../models/Category';
 import User from '../models/User';
+import Stream from '../models/Stream';
 
 // 加载环境变量
 dotenv.config();

@@ -72,6 +72,34 @@ src/
 - `GET /api/categories/:categoryId` - 获取分类详情
 - `GET /api/categories/popular` - 获取热门分类
 
+## 轮播图模型 (Banner)
+
+轮播图模型位于 `src/models/Banner.ts`，管理首页轮播图数据。
+
+### 数据结构
+- **title**: 轮播图标题
+- **description**: 轮播图描述
+- **imageUrl**: 图片URL
+- **targetUrl**: 目标跳转URL
+- **isExternal**: 是否为外部链接
+- **priority**: 优先级（用于排序）
+- **isActive**: 是否激活
+- **createdAt**: 创建时间
+- **updatedAt**: 更新时间
+
+### 相关API
+- `GET /api/banners`: 获取所有激活的轮播图
+- `GET /api/banners/:id`: 根据ID获取轮播图
+- `POST /api/banners`: 创建轮播图（管理员权限）
+- `PUT /api/banners/:id`: 更新轮播图（管理员权限）
+- `DELETE /api/banners/:id`: 删除轮播图（管理员权限）
+
+### 数据初始化
+系统提供了轮播图种子脚本，用于初始化基础轮播图数据：
+```bash
+pnpm run seed:banners
+```
+
 ## 环境变量
 
 在`.env`文件中配置以下环境变量：
@@ -81,3 +109,26 @@ src/
 - `JWT_SECRET` - JWT密钥
 - `JWT_EXPIRE` - JWT过期时间
 - `NODE_ENV` - 运行环境 
+
+## 直播模型 (Stream)
+
+直播模型位于 `src/models/Stream.ts`，管理直播间数据。
+
+### 数据结构
+- **title**: 直播标题
+- **description**: 直播描述
+- **thumbnailUrl**: 缩略图URL
+- **category**: 所属分类ID（关联Category模型）
+- **user**: 所属用户ID（关联User模型）
+- **isLive**: 是否在线直播中
+- **viewerCount**: 观看人数
+- **startedAt**: 开始直播时间
+- **endedAt**: 结束直播时间
+- **createdAt**: 创建时间
+- **updatedAt**: 更新时间
+
+### 索引优化
+- **isLive**: 用于快速查询正在直播的内容
+- **category**: 用于按分类查询直播
+- **user**: 用于查询特定用户的直播
+- **viewerCount**: 用于按观看人数排序（热门直播）

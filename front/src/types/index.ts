@@ -35,6 +35,19 @@ export interface Stream {
   endedAt?: string;
 }
 
+export interface Banner {
+  _id: string;
+  title: string;
+  description: string;
+  imageUrl: string;
+  targetUrl: string;
+  isExternal: boolean;
+  priority: number;
+  isActive: boolean;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
 export interface ApiResponse<T> {
   success: boolean;
   data?: T;
