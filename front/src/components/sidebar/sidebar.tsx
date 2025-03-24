@@ -14,12 +14,18 @@ interface SidebarProps {
 }
 
 export function Sidebar({ className }: SidebarProps) {
+  // 获取侧边栏状态
   const { isOpen, closeSidebar } = useContext(SidebarContext);
+  
+  // 存储推荐频道和热门分类
   const [recommendedChannels, setRecommendedChannels] = useState<Stream[]>([]);
   const [popularCategories, setPopularCategories] = useState<Category[]>([]);
+  
+  // 加载状态 作用是当侧边栏数据加载时，显示加载状态
   const [isLoadingChannels, setIsLoadingChannels] = useState(true);
   const [isLoadingCategories, setIsLoadingCategories] = useState(true);
 
+  // 加载侧边栏数据
   useEffect(() => {
     const loadSidebarData = async () => {
       // 加载推荐频道
@@ -93,7 +99,6 @@ export function Sidebar({ className }: SidebarProps) {
       viewerCount: 5200,
     }
   ];
-
   const fallbackCategories = [
     {
       _id: "1",
@@ -117,7 +122,6 @@ export function Sidebar({ className }: SidebarProps) {
       streamCount: 30
     }
   ];
-
   const displayedChannels = recommendedChannels.length > 0 ? recommendedChannels : fallbackChannels;
   const displayedCategories = popularCategories.length > 0 ? popularCategories : fallbackCategories;
 
@@ -219,7 +223,6 @@ export function Sidebar({ className }: SidebarProps) {
   const desktopSidebarClasses = cn(
     "fixed left-0 flex h-full w-60 flex-col bg-[#0e0e10] border-r border-[#2a2a2d] z-40 transition-transform duration-300",
     isOpen ? "translate-x-0" : "-translate-x-full",
-    "hidden lg:flex", // 在大屏幕上显示，中小屏幕隐藏
     className
   );
 
