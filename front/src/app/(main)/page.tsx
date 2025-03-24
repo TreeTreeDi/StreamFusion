@@ -3,7 +3,7 @@ import { Suspense } from "react";
 import { Welcome } from "@/components/home/welcome";
 import { Categories } from "@/components/home/categories";
 import { RecommendedChannels } from "@/components/home/recommended-channels";
-import { BannerCarousel } from "@/components/home/banner-carousel";
+import { BannerCarousel } from "@/components/home/BannerCarousel";
 import { Skeleton } from "@/components/ui/skeleton";
 
 export default function HomePage() {

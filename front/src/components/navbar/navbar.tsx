@@ -1,18 +1,35 @@
+"use client";
+
 import Link from "next/link";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
-import { Bell, Search } from "lucide-react";
+import { Bell, Search, Menu } from "lucide-react";
 import { AuthButton } from "@/components/auth/auth-button";
+import { useContext } from "react";
+import { SidebarContext } from "@/contexts/sidebar-context";
 
 export function Navbar() {
+  const { toggleSidebar } = useContext(SidebarContext);
+
   return (
     <div className="fixed top-0 w-full h-14 z-10 bg-[#18181b] border-b border-[#303032] shadow-sm">
-      <div className="flex items-center justify-between h-full px-4">
-        <Link href="/">
-          <div className="text-2xl font-bold text-[#a970ff]">
-            TwitchClone
-          </div>
-        </Link>
+      <div className=" flex items-center justify-between h-full px-4">
+        <div className="flex items-center gap-x-3">
+          <Button
+            variant="ghost"
+            size="icon"
+            className="block hover:text-[#a970ff] hover:bg-background/10"
+            onClick={toggleSidebar}
+            aria-label="打开侧边栏"
+          >
+            <Menu className="h-5 w-5" />
+          </Button>
+          <Link href="/">
+            <div className="text-2xl font-bold text-[#a970ff]">
+              TwitchClone
+            </div>
+          </Link>
+        </div>
         
         {/* Navigation Links */}
         <div className="hidden md:flex items-center gap-x-4">

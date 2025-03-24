@@ -44,8 +44,6 @@ export interface Banner {
   isExternal: boolean;
   priority: number;
   isActive: boolean;
-  createdAt?: string;
-  updatedAt?: string;
 }
 
 export interface ApiResponse<T> {

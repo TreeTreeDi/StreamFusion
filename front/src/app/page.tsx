@@ -1,33 +1,30 @@
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Suspense } from "react";
+import { StreamList } from "@/components/streams/StreamList";
+import { fetchPopularStreams } from "@/lib/api-service";
 
-export default function Home() {
+export const revalidate = 60; // 每60秒重新验证数据
+
+export default async function Home() {
+  const streams = await fetchPopularStreams(8);
+
   return (
     <div className="p-6 md:p-12 space-y-8">
-      {/* 轮播图（后期实现） */}
-      <div className="w-full h-[300px] rounded-xl bg-[#18181b] flex items-center justify-center">
-        <p className="text-muted-foreground">轮播图内容将在后期实现</p>
-      </div>
+
       
       {/* 推荐直播 */}
-      <div className="space-y-4">
-        <div className="flex justify-between items-center">
-          <h2 className="text-2xl font-bold">推荐直播</h2>
-          <button className="text-sm text-muted-foreground hover:text-[#a970ff] transition-colors">
-            查看更多
-          </button>
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-          {[1, 2, 3, 4, 5, 6, 7, 8].map((id) => (
-            <StreamCard key={id} />
-          ))}
-        </div>
-      </div>
+      <Suspense fallback={<StreamListSkeleton />}>
+        <StreamList 
+          title="推荐直播" 
+          streams={streams} 
+          showMore={true} 
+        />
+      </Suspense>
       
-      {/* 热门分类 */}
+      {/* 热门分类(后期实现) */}
       <div className="space-y-4">
         <div className="flex justify-between items-center">
           <h2 className="text-2xl font-bold">热门分类</h2>
-          <button className="text-sm text-muted-foreground hover:text-[#a970ff] transition-colors">
+          <button className="text-sm text-muted-foreground hover:text-primary transition-colors">
             查看全部
           </button>
         </div>
@@ -38,16 +35,16 @@ export default function Home() {
         </div>
       </div>
       
-      {/* 推荐主播 */}
+      {/* 推荐主播(后期实现) */}
       <div className="space-y-4">
         <div className="flex justify-between items-center">
           <h2 className="text-2xl font-bold">推荐主播</h2>
-          <button className="text-sm text-muted-foreground hover:text-[#a970ff] transition-colors">
-            发现更多
+          <button className="text-sm text-muted-foreground hover:text-primary transition-colors">
+            查看更多
           </button>
         </div>
-        <div className="flex overflow-x-auto pb-2 gap-4 scrollbar-hide">
-          {[1, 2, 3, 4, 5, 6, 7, 8].map((id) => (
+        <div className="flex gap-4 overflow-x-auto pb-4">
+          {[1, 2, 3, 4, 5, 6].map((id) => (
             <StreamerCard key={id} />
           ))}
         </div>
@@ -56,65 +53,49 @@ export default function Home() {
   );
 }
 
-function StreamCard() {
+// 骨架屏组件
+function BannerSkeleton() {
   return (
-    <Card className="stream-card overflow-hidden border-none">
-      <div className="aspect-video bg-[#0e0e10] relative">
-        {/* 这里将来会放置实际的缩略图 */}
-        <div className="absolute top-2 left-2 bg-destructive text-destructive-foreground text-xs px-2 py-1 rounded-md flex items-center">
-          <div className="w-2 h-2 bg-white rounded-full mr-1"></div>
-          直播中
-        </div>
-        <div className="absolute bottom-2 left-2 bg-background/80 text-foreground text-xs px-2 py-1 rounded-md">
-          1,234 观众
-        </div>
+    <div className="w-full h-[300px] rounded-xl bg-muted animate-pulse"></div>
+  );
+}
+
+function StreamListSkeleton() {
+  return (
+    <div className="space-y-4">
+      <div className="h-8 w-48 bg-muted rounded animate-pulse"></div>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+        {[1, 2, 3, 4].map((id) => (
+          <div key={id} className="aspect-video bg-muted rounded-lg animate-pulse"></div>
+        ))}
       </div>
-      <CardHeader className="p-3">
-        <div className="flex space-x-2">
-          <div className="h-10 w-10 rounded-full bg-[#18181b] overflow-hidden">
-            {/* 这里将来会放置主播头像 */}
-          </div>
-          <div>
-            <CardTitle className="text-base truncate">直播标题示例</CardTitle>
-            <CardDescription className="text-xs truncate">主播名称</CardDescription>
-            <p className="text-xs text-muted-foreground mt-1 truncate">游戏分类</p>
-          </div>
-        </div>
-      </CardHeader>
-    </Card>
+    </div>
   );
 }
 
 function CategoryCard() {
   return (
-    <Card className="category-card overflow-hidden border-none">
-      <div className="aspect-[4/5] bg-[#18181b] relative">
-        {/* 这里将来会放置分类封面图 */}
+    <div className="category-card rounded-md overflow-hidden bg-muted hover:bg-muted/80 transition-all hover:scale-[1.03]">
+      <div className="aspect-[4/5.5] bg-muted"></div>
+      <div className="p-2">
+        <h3 className="font-medium truncate">分类名称</h3>
+        <p className="text-xs text-muted-foreground">5.2万观众</p>
       </div>
-      <CardContent className="p-3">
-        <CardTitle className="text-base truncate">分类名称</CardTitle>
-        <CardDescription className="text-xs truncate">
-          1.2万 观众
-        </CardDescription>
-      </CardContent>
-    </Card>
+    </div>
   );
 }
 
 function StreamerCard() {
   return (
     <div className="stream-card flex-shrink-0 w-[200px]">
-      <div className="relative w-full aspect-video bg-[#18181b] rounded-md mb-2 overflow-hidden">
-        {/* 这里将来会放置直播缩略图 */}
+      <div className="relative w-full aspect-video bg-muted rounded-md mb-2 overflow-hidden">
         <div className="absolute top-2 left-2 bg-destructive text-destructive-foreground text-xs px-2 py-1 rounded-md flex items-center">
           <div className="w-2 h-2 bg-white rounded-full mr-1"></div>
           直播中
         </div>
       </div>
       <div className="flex items-center">
-        <div className="w-9 h-9 rounded-full bg-[#18181b] overflow-hidden mr-2">
-          {/* 这里将来会放置主播头像 */}
-        </div>
+        <div className="w-9 h-9 rounded-full bg-muted overflow-hidden mr-2"></div>
         <div className="overflow-hidden">
           <h3 className="text-sm font-medium truncate">主播名称</h3>
           <p className="text-xs text-muted-foreground truncate">游戏分类</p>

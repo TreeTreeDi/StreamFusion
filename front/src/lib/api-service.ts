@@ -83,4 +83,21 @@ export const fetchBanners = async () => {
     console.error('Error fetching banners:', error);
     throw error;
   }
+};
+
+export const fetchPopularStreams = async (limit: number = 8): Promise<Stream[]> => {
+  try {
+    const response = await axiosInstance.get(`/streams/popular?limit=${limit}`);
+    const data = response.data;
+
+    if (!data.success || !data.data) {
+      console.error("获取热门直播失败:", data.error);
+      return [];
+    }
+
+    return data.data;
+  } catch (error) {
+    console.error("获取热门直播时出错:", error);
+    return [];
+  }
 }; 
