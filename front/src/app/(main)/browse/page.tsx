@@ -1,17 +1,17 @@
 "use client";
 
 import React, { useState } from "react";
-import { Metadata } from "next";
+import { Switch } from "@/components/ui/switch";
 import CategoryFilter from "@/components/browse/CategoryFilter";
 import TagFilter from "@/components/browse/TagFilter";
 import CategoryGrid from "@/components/browse/CategoryGrid";
 import SortOptions from "@/components/browse/SortOptions";
 
-
 export default function BrowsePage() {
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [sortBy, setSortBy] = useState<string>("viewers");
+  const [useInfiniteScroll, setUseInfiniteScroll] = useState(false);
 
   // 处理分类选择
   const handleCategoryChange = (category: string) => {
@@ -49,10 +49,23 @@ export default function BrowsePage() {
         />
       </div>
       
-      {/* 排序选项 */}
+      {/* 排序和无限滚动切换 */}
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-xl font-bold">热门游戏分类</h2>
-        <SortOptions sortBy={sortBy} onSortChange={handleSortChange} />
+        
+        <div className="flex items-center space-x-4">
+          {/* 无限滚动切换 */}
+          <div className="flex items-center space-x-2">
+            <span className="text-sm text-gray-400">无限滚动</span>
+            <Switch 
+              checked={useInfiniteScroll}
+              onCheckedChange={setUseInfiniteScroll}
+            />
+          </div>
+          
+          {/* 排序选项 */}
+          <SortOptions sortBy={sortBy} onSortChange={handleSortChange} />
+        </div>
       </div>
       
       {/* 分类网格 */}
@@ -60,6 +73,7 @@ export default function BrowsePage() {
         selectedCategory={selectedCategory} 
         selectedTags={selectedTags} 
         sortBy={sortBy}
+        infiniteScroll={useInfiniteScroll}
       />
     </div>
   );

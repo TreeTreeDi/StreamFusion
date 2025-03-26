@@ -24,7 +24,7 @@ export default function CategoryFilter({ selectedCategory, onSelectCategory }: C
       try {
         setIsLoading(true);
         const data = await categoryService.getCategories();
-        setCategories(data);
+        setCategories(data.items);
       } catch (error) {
         console.error("加载分类失败:", error);
       } finally {

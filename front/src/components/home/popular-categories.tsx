@@ -17,9 +17,10 @@ export const PopularCategories = () => {
       try {
         setIsLoading(true);
         const response = await fetchPopularCategories(6); // 获取6个热门分类
-        if (response) {
-          setCategories(response);
-        }
+        
+        console.log(response);
+        setCategories(Array.isArray(response.items) ? response.items : []);
+
       } catch (error) {
         console.error("加载热门分类失败:", error);
       } finally {
@@ -110,4 +111,4 @@ const CategoryCard = ({ category }: CategoryCardProps) => {
       </div>
     </Link>
   );
-}; 
+};

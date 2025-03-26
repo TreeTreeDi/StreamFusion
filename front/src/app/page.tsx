@@ -7,7 +7,6 @@ export const revalidate = 60; // 每60秒重新验证数据
 
 export default async function Home() {
   const streams = await fetchPopularStreams(4);
-  console.log(streams.streams);
 
   return (
     <div className="p-6 md:p-12 space-y-8">

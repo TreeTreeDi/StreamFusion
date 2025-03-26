@@ -21,6 +21,16 @@ export interface Category {
   streamCount: number;
 }
 
+export interface CategoriesResponse {
+  items: Category[];
+  pagination: {
+    total: number;
+    page: number;
+    limit: number;
+    pages: number;
+  };
+}
+
 // 添加分页接口类型
 export interface Pagination {
   total: number;
@@ -65,4 +75,4 @@ export interface ApiResponse<T> {
   data?: T;
   error?: string;
   message?: string;
-} 
+}

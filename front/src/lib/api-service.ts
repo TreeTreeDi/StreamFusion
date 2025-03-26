@@ -1,4 +1,4 @@
-import { Category, Stream, ApiResponse, StreamsResponse } from "@/types";
+import { Category, Stream, ApiResponse, StreamsResponse, CategoriesResponse } from "@/types";
 import axios from "axios";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api";
@@ -11,7 +11,8 @@ export const fetchCategories = async (): Promise<Category[]> => {
   try {
     const response = await fetch(`${API_URL}/categories`);
     const data: ApiResponse<Category[]> = await response.json();
-    
+    console.log('API Response:', data); // 添加这行来查看返回数据
+
     if (!data.success || !data.data) {
       console.error("获取分类失败:", data.error);
       return [];
@@ -24,20 +25,20 @@ export const fetchCategories = async (): Promise<Category[]> => {
   }
 };
 
-export const fetchPopularCategories = async (limit: number = 6): Promise<Category[]> => {
+export const fetchPopularCategories = async (limit: number = 6): Promise<CategoriesResponse> => {
   try {
     const response = await fetch(`${API_URL}/categories/popular?limit=${limit}`);
-    const data: ApiResponse<Category[]> = await response.json();
+    const data: ApiResponse<CategoriesResponse> = await response.json();
     
     if (!data.success || !data.data) {
       console.error("获取热门分类失败:", data.error);
-      return [];
+      return { items: [], pagination: { total: 0, page: 1, limit, pages: 1 } };
     }
     
     return data.data;
   } catch (error) {
     console.error("获取热门分类时出错:", error);
-    return [];
+    return { items: [], pagination: { total: 0, page: 1, limit, pages: 1 } };
   }
 };
 
@@ -100,4 +101,4 @@ export const fetchPopularStreams = async (limit: number = 8): Promise<StreamsRes
     console.error("获取热门直播时出错:", error);
     return { streams: [], pagination: { total: 0, page: 1, limit: 8, pages: 1 } };
   }
-}; 
+};

@@ -4,42 +4,69 @@ import { successResponse, errorResponse } from '../utils/apiResponse';
 
 /**
  * 获取所有分类
+ * @route GET /api/categories
  */
 export const getAllCategories = async (ctx: Context) => {
   try {
-    const { category, sort, tags, limit = 20 } = ctx.query;
+    const { 
+      category, 
+      sort = 'name',
+      tags,
+      page = 1, 
+      limit = 12 
+    } = ctx.query;
+    
+    // 解析分页参数
+    const pageNum = parseInt(page as string);
+    const limitNum = parseInt(limit as string);
+    const skip = (pageNum - 1) * limitNum;
     
     // 构建查询条件
     const query: any = {};
     
-    // 如果传入了category参数，按ID筛选
+    // 如果有分类ID筛选
     if (category) {
       query._id = category;
     }
     
-    // 标签筛选逻辑(如果需要)
+    // 如果有标签筛选
     if (tags) {
-      // 假设有一个标签关联字段
+      // 假设Category模型中有与Tag的关联，例如通过引用tag ID
       // query.tags = { $in: (tags as string).split(',') };
     }
     
     // 确定排序方式
-    let sortOption = {};
+    let sortOption: any = {};
     if (sort === 'viewers') {
       sortOption = { viewerCount: -1 };
+    } else if (sort === 'streams') {
+      sortOption = { streamCount: -1 };
     } else if (sort === 'newest') {
       sortOption = { createdAt: -1 };
     } else {
-      // 默认排序
+      // 默认按名称排序
       sortOption = { name: 1 };
     }
     
-    // 执行查询
+    // 获取总数
+    const total = await Category.countDocuments(query);
+    
+    // 获取分页数据
     const categories = await Category.find(query)
       .sort(sortOption)
-      .limit(parseInt(limit as string));
-    
-    ctx.body = successResponse(categories, '获取分类列表成功');
+      .skip(skip)
+      .limit(limitNum);
+      
+    // 返回格式化的结果，包含分页信息
+    ctx.body = successResponse({
+      items: categories,
+      pagination: {
+        total,
+        page: pageNum,
+        limit: limitNum,
+        pages: Math.ceil(total / limitNum)
+      }
+    }, '获取分类列表成功');
   } catch (err) {
     console.error('获取分类列表失败:', err);
     ctx.status = 500;
@@ -49,16 +76,48 @@ export const getAllCategories = async (ctx: Context) => {
 
 /**
  * 获取热门分类
+ * @route GET /api/categories/popular
  */
 export const getPopularCategories = async (ctx: Context) => {
   try {
-    const limit = ctx.query.limit ? parseInt(ctx.query.limit as string) : 10;
+    const { 
+      tags,
+      page = 1, 
+      limit = 10 
+    } = ctx.query;
     
-    const categories = await Category.find()
+    // 解析分页参数
+    const pageNum = parseInt(page as string);
+    const limitNum = parseInt(limit as string);
+    const skip = (pageNum - 1) * limitNum;
+    
+    // 构建查询条件
+    const query: any = {};
+    
+    // 如果有标签筛选
+    if (tags) {
+      // 实现标签筛选逻辑
+    }
+    
+    // 获取总数
+    const total = await Category.countDocuments(query);
+    
+    // 获取分页数据，按观看人数排序
+    const categories = await Category.find(query)
       .sort({ viewerCount: -1 })
-      .limit(limit);
+      .skip(skip)
+      .limit(limitNum);
     
-    ctx.body = successResponse(categories, '获取热门分类成功');
+    // 返回格式化的结果，包含分页信息
+    ctx.body = successResponse({
+      items: categories,
+      pagination: {
+        total,
+        page: pageNum,
+        limit: limitNum,
+        pages: Math.ceil(total / limitNum)
+      }
+    }, '获取热门分类成功');
   } catch (err) {
     console.error('获取热门分类失败:', err);
     ctx.status = 500;
@@ -68,10 +127,13 @@ export const getPopularCategories = async (ctx: Context) => {
 
 /**
  * 根据ID获取分类
+ * @route GET /api/categories/:id
  */
 export const getCategoryById = async (ctx: Context) => {
   try {
-    const category = await Category.findById(ctx.params.id);
+    const { id } = ctx.params;
+    
+    const category = await Category.findById(id);
     
     if (!category) {
       ctx.status = 404;
@@ -89,10 +151,13 @@ export const getCategoryById = async (ctx: Context) => {
 
 /**
  * 根据slug获取分类
+ * @route GET /api/categories/slug/:slug
  */
 export const getCategoryBySlug = async (ctx: Context) => {
   try {
-    const category = await Category.findOne({ slug: ctx.params.slug });
+    const { slug } = ctx.params;
+    
+    const category = await Category.findOne({ slug });
     
     if (!category) {
       ctx.status = 404;
