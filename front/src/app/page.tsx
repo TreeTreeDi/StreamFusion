@@ -1,11 +1,13 @@
 import { Suspense } from "react";
 import { StreamList } from "@/components/streams/StreamList";
+import { PopularCategories } from "@/components/home/popular-categories";
 import { fetchPopularStreams } from "@/lib/api-service";
 
 export const revalidate = 60; // 每60秒重新验证数据
 
 export default async function Home() {
-  const streams = await fetchPopularStreams(8);
+  const streams = await fetchPopularStreams(4);
+  console.log(streams.streams);
 
   return (
     <div className="p-6 md:p-12 space-y-8">
@@ -15,25 +17,13 @@ export default async function Home() {
       <Suspense fallback={<StreamListSkeleton />}>
         <StreamList 
           title="推荐直播" 
-          streams={streams} 
+          streams={streams.streams} 
           showMore={true} 
         />
       </Suspense>
       
-      {/* 热门分类(后期实现) */}
-      <div className="space-y-4">
-        <div className="flex justify-between items-center">
-          <h2 className="text-2xl font-bold">热门分类</h2>
-          <button className="text-sm text-muted-foreground hover:text-primary transition-colors">
-            查看全部
-          </button>
-        </div>
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
-          {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((id) => (
-            <CategoryCard key={id} />
-          ))}
-        </div>
-      </div>
+      {/* 热门分类 */}
+      <PopularCategories />
       
       {/* 推荐主播(后期实现) */}
       <div className="space-y-4">
@@ -68,18 +58,6 @@ function StreamListSkeleton() {
         {[1, 2, 3, 4].map((id) => (
           <div key={id} className="aspect-video bg-muted rounded-lg animate-pulse"></div>
         ))}
-      </div>
-    </div>
-  );
-}
-
-function CategoryCard() {
-  return (
-    <div className="category-card rounded-md overflow-hidden bg-muted hover:bg-muted/80 transition-all hover:scale-[1.03]">
-      <div className="aspect-[4/5.5] bg-muted"></div>
-      <div className="p-2">
-        <h3 className="font-medium truncate">分类名称</h3>
-        <p className="text-xs text-muted-foreground">5.2万观众</p>
       </div>
     </div>
   );

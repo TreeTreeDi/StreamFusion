@@ -1,4 +1,4 @@
-import { Category, Stream, ApiResponse } from "@/types";
+import { Category, Stream, ApiResponse, StreamsResponse } from "@/types";
 import axios from "axios";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api";
@@ -85,19 +85,19 @@ export const fetchBanners = async () => {
   }
 };
 
-export const fetchPopularStreams = async (limit: number = 8): Promise<Stream[]> => {
+export const fetchPopularStreams = async (limit: number = 8): Promise<StreamsResponse> => {
   try {
     const response = await axiosInstance.get(`/streams/popular?limit=${limit}`);
     const data = response.data;
 
     if (!data.success || !data.data) {
       console.error("获取热门直播失败:", data.error);
-      return [];
+      return { streams: [], pagination: { total: 0, page: 1, limit: 8, pages: 1 } };
     }
 
     return data.data;
   } catch (error) {
     console.error("获取热门直播时出错:", error);
-    return [];
+    return { streams: [], pagination: { total: 0, page: 1, limit: 8, pages: 1 } };
   }
 }; 

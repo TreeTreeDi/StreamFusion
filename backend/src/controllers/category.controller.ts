@@ -7,7 +7,38 @@ import { successResponse, errorResponse } from '../utils/apiResponse';
  */
 export const getAllCategories = async (ctx: Context) => {
   try {
-    const categories = await Category.find().sort({ name: 1 });
+    const { category, sort, tags, limit = 20 } = ctx.query;
+    
+    // 构建查询条件
+    const query: any = {};
+    
+    // 如果传入了category参数，按ID筛选
+    if (category) {
+      query._id = category;
+    }
+    
+    // 标签筛选逻辑(如果需要)
+    if (tags) {
+      // 假设有一个标签关联字段
+      // query.tags = { $in: (tags as string).split(',') };
+    }
+    
+    // 确定排序方式
+    let sortOption = {};
+    if (sort === 'viewers') {
+      sortOption = { viewerCount: -1 };
+    } else if (sort === 'newest') {
+      sortOption = { createdAt: -1 };
+    } else {
+      // 默认排序
+      sortOption = { name: 1 };
+    }
+    
+    // 执行查询
+    const categories = await Category.find(query)
+      .sort(sortOption)
+      .limit(parseInt(limit as string));
+    
     ctx.body = successResponse(categories, '获取分类列表成功');
   } catch (err) {
     console.error('获取分类列表失败:', err);
