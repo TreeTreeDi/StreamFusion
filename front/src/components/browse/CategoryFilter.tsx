@@ -20,7 +20,7 @@ export default function CategoryFilter({ selectedCategory, onSelectCategory }: C
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const fetchCategories = async () => {
+    const fetchCategories = async () => { 
       try {
         setIsLoading(true);
         const data = await categoryService.getCategories();
