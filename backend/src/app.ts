@@ -13,6 +13,7 @@ import channelRoutes from './routes/channel.routes';
 import bannerRoutes from './routes/banner.routes';
 import streamRoutes from './routes/stream.routes';
 import tagRoutes from './routes/tag.routes';
+import srsRoutes from './routes/srs.routes';
 
 // 加载环境变量
 dotenv.config();
@@ -64,6 +65,7 @@ app.use(channelRoutes.routes()).use(channelRoutes.allowedMethods());
 app.use(bannerRoutes.routes()).use(bannerRoutes.allowedMethods());
 app.use(streamRoutes.routes()).use(streamRoutes.allowedMethods());
 app.use(tagRoutes.routes()).use(tagRoutes.allowedMethods());
+app.use(srsRoutes.routes()).use(srsRoutes.allowedMethods());
 
 // 使用路由
 app.use(router.routes()).use(router.allowedMethods());
