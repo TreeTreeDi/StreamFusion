@@ -2,6 +2,7 @@ import { Context } from 'koa';
 import jwt from 'jsonwebtoken';
 import User from '../models/User';
 import { successResponse, errorResponse } from '../utils/apiResponse';
+import { generateStreamKey } from '../lib/utils'; // 导入密钥生成函数
 
 // JWT密钥
 const JWT_SECRET = process.env.JWT_SECRET || 'your_jwt_secret_key';
@@ -76,7 +77,16 @@ export const register = async (ctx: Context) => {
     
   } catch (error: any) {
     ctx.status = 500;
-    ctx.body = errorResponse('服务器错误', 500, error);
+    if (error.code === 11000) { // 处理唯一键冲突
+        ctx.status = 400;
+        ctx.body = errorResponse('用户名或邮箱已被使用', 400);
+    } else if (error.name === 'ValidationError') { // 处理 Mongoose 验证错误
+        ctx.status = 400;
+        const messages = Object.values(error.errors).map((val: any) => val.message);
+        ctx.body = errorResponse(messages.join(', '), 400);
+    } else {
+        ctx.body = errorResponse('服务器错误', 500, error);
+    }
   }
 };
 
@@ -183,5 +193,144 @@ export const getMe = async (ctx: Context) => {
   } catch (error: any) {
     ctx.status = 500;
     ctx.body = errorResponse('服务器错误', 500, error);
+  }
+};
+
+/**
+ * 获取当前用户的推流密钥
+ * @route GET /api/auth/stream-key
+ */
+export const getStreamKey = async (ctx: Context) => {
+  try {
+    const userId = ctx.state.user?.id;
+
+    if (!userId) {
+      ctx.status = 401;
+      ctx.body = errorResponse('未授权访问', 401);
+      return;
+    }
+
+    const user = await User.findById(userId);
+
+    if (!user) {
+      ctx.status = 404;
+      ctx.body = errorResponse('用户不存在', 404);
+      return;
+    }
+
+    // 可以在这里添加检查用户是否为 streamer 的逻辑
+    // if (!user.isStreamer) {
+    //   ctx.status = 403;
+    //   ctx.body = errorResponse('用户无直播权限', 403);
+    //   return;
+    // }
+
+    // 如果没有密钥，则生成一个
+    if (!user.streamKey) {
+      user.streamKey = generateStreamKey();
+      user.streamKeyGeneratedAt = new Date();
+      await user.save();
+    }
+
+    ctx.status = 200;
+    ctx.body = successResponse({ streamKey: user.streamKey }, '获取推流密钥成功');
+
+  } catch (error: any) {
+    ctx.status = 500;
+    ctx.body = errorResponse('服务器错误', 500, error);
+  }
+};
+
+/**
+ * 重置当前用户的推流密钥
+ * @route POST /api/auth/stream-key/regenerate
+ */
+export const regenerateStreamKey = async (ctx: Context) => {
+  try {
+    const userId = ctx.state.user?.id;
+
+    if (!userId) {
+      ctx.status = 401;
+      ctx.body = errorResponse('未授权访问', 401);
+      return;
+    }
+
+    const user = await User.findById(userId);
+
+    if (!user) {
+      ctx.status = 404;
+      ctx.body = errorResponse('用户不存在', 404);
+      return;
+    }
+
+    // 可以在这里添加检查用户是否为 streamer 的逻辑
+    // if (!user.isStreamer) {
+    //   ctx.status = 403;
+    //   ctx.body = errorResponse('用户无直播权限', 403);
+    //   return;
+    // }
+
+    user.streamKey = generateStreamKey();
+    user.streamKeyGeneratedAt = new Date();
+    await user.save();
+
+    ctx.status = 200;
+    ctx.body = successResponse({ streamKey: user.streamKey }, '推流密钥已重置');
+
+  } catch (error: any) {
+    ctx.status = 500;
+    ctx.body = errorResponse('服务器错误', 500, error);
+  }
+};
+
+/**
+ * 为当前用户开启直播功能
+ * @route POST /api/auth/enable-streaming
+ */
+export const enableStreaming = async (ctx: Context) => {
+  try {
+    const userId = ctx.state.user?.id;
+
+    if (!userId) {
+      ctx.status = 401;
+      ctx.body = errorResponse('未授权访问', 401);
+      return;
+    }
+
+    const user = await User.findById(userId);
+
+    if (!user) {
+      ctx.status = 404;
+      ctx.body = errorResponse('用户不存在', 404);
+      return;
+    }
+
+    // 如果已经是主播，则无需操作
+    if (user.isStreamer) {
+      ctx.status = 200;
+      ctx.body = successResponse(null, '直播功能已经开启');
+      return;
+    }
+
+    // 更新用户状态
+    user.isStreamer = true;
+    await user.save();
+
+    ctx.status = 200;
+    // 返回更新后的用户信息（可选，但有助于前端确认）
+    ctx.body = successResponse({
+        id: user._id,
+        username: user.username,
+        email: user.email,
+        displayName: user.displayName,
+        avatar: user.avatar,
+        isStreamer: user.isStreamer,
+        isAdmin: user.isAdmin,
+        createdAt: user.createdAt
+     }, '直播功能已成功开启');
+
+  } catch (error: any) {
+    ctx.status = 500;
+    ctx.body = errorResponse('开启直播功能时发生服务器错误', 500, error);
   }
 }; 

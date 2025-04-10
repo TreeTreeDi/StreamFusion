@@ -12,6 +12,7 @@ export interface IUser {
   following: mongoose.Types.ObjectId[];
   isStreamer: boolean;
   streamKey?: string;
+  streamKeyGeneratedAt?: Date;
   isAdmin: boolean;
   createdAt: Date;
   comparePassword(candidatePassword: string): Promise<boolean>;
@@ -69,6 +70,9 @@ const UserSchema = new mongoose.Schema<IUser>({
     type: String,
     unique: true,
     sparse: true
+  },
+  streamKeyGeneratedAt: {
+    type: Date,
   },
   isAdmin: {
     type: Boolean,

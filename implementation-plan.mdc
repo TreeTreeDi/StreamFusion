@@ -1,0 +1,17 @@
+#### 任务5.2：后端直播间数据API
+- [x] 实现获取直播详情API (`GET /api/streams/:streamId`)
+- [x] 实现获取主播信息API (`GET /api/users/:userId/channel`)
+- **完成状态**: Done
+- **总结**:
+  1. 在 `stream.controller.ts` 中确认了 `getStreamById` 函数，用于获取直播详情。
+  2. 在 `channel.controller.ts` 中添加了 `getUserChannel` 函数，用于获取指定用户的频道信息（包括用户信息和当前直播状态）。 
+
+#### 任务5.3：前端视频播放器
+- [x] 集成视频播放器组件 (占位符)
+- [x] 实现在线/离线状态处理
+- **参考文件**: `/UI/pages/channel.html`（视频播放器部分）
+- **完成状态**: Done
+- **总结**:
+  1. 修改了 `channel/[channelId]/page.tsx`，使其调用 `getChannelInfo` 服务获取真实的频道数据（用户信息、直播信息、在线状态）。
+  2. 更新了 `StreamPlayer` 组件，允许 `stream` prop 为 `null`，并添加 `user` prop，根据 `isLive` 状态动态显示直播画面占位符（使用缩略图）或离线提示。
+  3. 更新了 `AboutStreamer` 组件，使其 props 与 `getChannelInfo` 返回的用户信息结构匹配。 

@@ -63,6 +63,21 @@ export interface LoginParams {
   password: string;
 }
 
+// 推流密钥响应接口
+export interface StreamKeyResponse {
+  success: boolean;
+  message: string;
+  data?: {
+    streamKey: string;
+  };
+  status?: number;
+  error?: any;
+  timestamp?: number;
+}
+
+// 开启直播响应接口（复用AuthResponse，因为返回用户信息）
+// export interface EnableStreamingResponse extends AuthResponse {}
+
 // 认证相关API
 export const authApi = {
   // 用户注册
@@ -111,6 +126,57 @@ export const authApi = {
       return {
         success: false,
         message: '获取用户信息失败',
+        error: error,
+      };
+    }
+  },
+  
+  // 获取推流密钥
+  getStreamKey: async (): Promise<StreamKeyResponse> => {
+    try {
+      const response = await api.get<StreamKeyResponse>('/auth/stream-key');
+      return response.data;
+    } catch (error) {
+      if (axios.isAxiosError(error) && error.response) {
+        return error.response.data as StreamKeyResponse;
+      }
+      return {
+        success: false,
+        message: '获取推流密钥失败',
+        error: error,
+      };
+    }
+  },
+
+  // 重置推流密钥
+  regenerateStreamKey: async (): Promise<StreamKeyResponse> => {
+    try {
+      const response = await api.post<StreamKeyResponse>('/auth/stream-key/regenerate');
+      return response.data;
+    } catch (error) {
+      if (axios.isAxiosError(error) && error.response) {
+        return error.response.data as StreamKeyResponse;
+      }
+      return {
+        success: false,
+        message: '重置推流密钥失败',
+        error: error,
+      };
+    }
+  },
+
+  // 开启直播功能
+  enableStreaming: async (): Promise<AuthResponse> => {
+    try {
+      const response = await api.post<AuthResponse>('/auth/enable-streaming');
+      return response.data;
+    } catch (error) {
+      if (axios.isAxiosError(error) && error.response) {
+        return error.response.data as AuthResponse;
+      }
+      return {
+        success: false,
+        message: '开启直播功能请求失败',
         error: error,
       };
     }

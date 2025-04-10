@@ -85,6 +85,11 @@ export function AuthButton() {
               </DropdownMenuItem>
             </Link>
           )}
+          <Link href="/dashboard/streaming/keys">
+            <DropdownMenuItem>
+              直播设置
+            </DropdownMenuItem>
+          </Link>
           <Link href="/settings">
             <DropdownMenuItem>
               设置

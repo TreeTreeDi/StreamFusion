@@ -8,7 +8,7 @@
     "dev": "nodemon --exec ts-node src/index.ts",
     "build": "tsc",
     "lint": "eslint 'src/**/*.{js,ts}' --fix",
-    "test": "jest",
+    "test": "vitest run",
     "seed:categories": "ts-node src/utils/seedCategories.ts",
     "seed:banners": "ts-node src/utils/seedBanners.ts"
   },
@@ -45,8 +45,11 @@
     "@types/koa-router": "^7.4.8",
     "@types/mongoose": "^5.11.97",
     "@types/node": "^22.13.11",
+    "@types/supertest": "^6.0.3",
     "nodemon": "^3.1.9",
+    "supertest": "^7.1.0",
     "ts-node": "^10.9.2",
-    "typescript": "^5.8.2"
+    "typescript": "^5.8.2",
+    "vitest": "^3.1.1"
   }
 }

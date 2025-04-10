@@ -102,6 +102,78 @@
   }
   ```
 
+### 获取当前用户推流密钥
+- **URL**: `/api/auth/stream-key`
+- **方法**: GET
+- **请求头**: Authorization: Bearer {jwt-token}
+- **响应 (成功)**:
+  ```json
+  {
+    "success": true,
+    "message": "获取推流密钥成功",
+    "data": {
+      "streamKey": "user-specific-stream-key"
+    }
+  }
+  ```
+- **响应 (错误)**:
+  - `401 未授权`: 未提供有效令牌
+  - `404 未找到`: 用户不存在
+  - `403 禁止访问`: (如果启用了权限检查) 用户无直播权限
+
+### 重置当前用户推流密钥
+- **URL**: `/api/auth/stream-key/regenerate`
+- **方法**: POST
+- **请求头**: Authorization: Bearer {jwt-token}
+- **响应 (成功)**:
+  ```json
+  {
+    "success": true,
+    "message": "推流密钥已重置",
+    "data": {
+      "streamKey": "new-user-specific-stream-key"
+    }
+  }
+  ```
+- **响应 (错误)**:
+  - `401 未授权`: 未提供有效令牌
+  - `404 未找到`: 用户不存在
+  - `403 禁止访问`: (如果启用了权限检查) 用户无直播权限
+
+### 为当前用户开启直播功能
+- **URL**: `/api/auth/enable-streaming`
+- **方法**: POST
+- **请求头**: Authorization: Bearer {jwt-token}
+- **请求体**: (无)
+- **响应 (成功, 首次开启)**:
+  ```json
+  {
+    "success": true,
+    "message": "直播功能已成功开启",
+    "data": {
+        "id": "user-id",
+        "username": "user123",
+        "email": "user@example.com",
+        "displayName": "User Display Name",
+        "avatar": "https://via.placeholder.com/150",
+        "isStreamer": true,
+        "isAdmin": false,
+        "createdAt": "2023-03-22T05:32:14.567Z"
+    }
+  }
+  ```
+- **响应 (成功, 已开启)**:
+  ```json
+  {
+    "success": true,
+    "message": "直播功能已经开启",
+    "data": null
+  }
+  ```
+- **响应 (错误)**:
+  - `401 未授权`: 未提供有效令牌
+  - `404 未找到`: 用户不存在
+
 ## 分类接口
 
 ### 获取所有分类
@@ -384,25 +456,25 @@
     "message": "获取直播详情成功",
     "data": {
       "_id": "stream-id-1",
-      "title": "英雄联盟排位赛",
-      "description": "钻石局排位",
-      "thumbnailUrl": "https://example.com/thumbnails/stream1.jpg",
-      "category": {
-        "_id": "category-id-1",
-        "name": "英雄联盟",
-        "slug": "lol"
-      },
       "user": {
         "_id": "user-id-1",
-        "username": "gamer123",
-        "displayName": "职业玩家",
-        "avatar": "https://example.com/avatars/user1.jpg",
-        "bio": "专业游戏玩家，主攻MOBA类游戏"
+        "username": "streamer1",
+        "displayName": "Streamer One",
+        "avatar": "https://example.com/avatar/streamer1.jpg",
+        "bio": "我是一个喜欢玩FPS的游戏主播"
       },
+      "title": "我的第一场直播！",
+      "description": "来和我一起玩吧！",
+      "category": {
+        "_id": "category-id-1",
+        "name": "游戏",
+        "slug": "games"
+      },
+      "tags": [], // 暂未实现
+      "thumbnailUrl": "https://example.com/thumbnails/stream1.jpg",
       "isLive": true,
-      "viewerCount": 1250,
-      "startedAt": "2023-03-23T14:30:00.000Z",
-      "createdAt": "2023-03-23T14:28:35.123Z"
+      "viewerCount": 150,
+      "startedAt": "2023-03-26T10:00:00.000Z"
     }
   }
   ```
@@ -431,6 +503,40 @@
         "title": "英雄联盟排位赛"
       }
     ]
+  }
+  ```
+
+### 获取用户频道信息
+- **URL**: `/api/users/:userId/channel`
+- **方法**: GET
+- **响应**:
+  ```json
+  {
+    "success": true,
+    "message": "获取用户频道信息成功",
+    "data": {
+      "user": {
+        "id": "user-id-1",
+        "username": "streamer1",
+        "displayName": "Streamer One",
+        "avatar": "https://example.com/avatar/streamer1.jpg",
+        "bio": "我是一个喜欢玩FPS的游戏主播"
+      },
+      "stream": {
+        "id": "stream-id-1",
+        "title": "我的第一场直播！",
+        "description": "来和我一起玩吧！",
+        "category": {
+          "_id": "category-id-1",
+          "name": "游戏",
+          "slug": "games"
+        },
+        "thumbnailUrl": "https://example.com/thumbnails/stream1.jpg",
+        "viewerCount": 150,
+        "startedAt": "2023-03-26T10:00:00.000Z"
+      },
+      "isLive": true
+    }
   }
   ```
 
