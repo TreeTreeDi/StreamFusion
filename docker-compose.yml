@@ -1,13 +1,14 @@
 services:
   srs:
-    image: ossrs/srs:5 # 或者使用 ossrs/srs:6
+    image: ossrs/srs:6 # 或者使用 ossrs/srs:6
     container_name: srs_media_server
-    ports:
-      - "1935:1935" # RTMP
-      - "8080:8080" # HTTP-FLV / HLS
-      - "1985:1985" # HTTP API
-      - "8000:8000/udp" # WebRTC over UDP (如果需要 WebRTC)
-      - "1990:1990" # Prometheus Exporter (可选)
+    network_mode: "host"  # 使用主机网络模式
+    # ports部分在host模式下不需要，可以注释掉
+    # ports:
+    #   - "1935:1935" # RTMP
+    #   - "8080:8080" # HTTP-FLV, HLS
+    #   - "1985:1985" # HTTP API
+    #   - "8000:8000/udp" # WebRTC over UDP
     volumes:
       - ./srs.conf:/usr/local/srs/conf/srs.conf # 挂载配置文件
     restart: always
@@ -25,7 +26,6 @@ services:
 #     - PORT=5000
 # 
 # mongo:
-#   image: mongo:latest
 #   container_name: mongodb
 #   ports:
 #     - "27017:27017"
