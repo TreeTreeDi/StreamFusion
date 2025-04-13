@@ -516,29 +516,31 @@
     "message": "获取用户频道信息成功",
     "data": {
       "user": {
-        "id": "user-id-1",
-        "username": "streamer1",
-        "displayName": "Streamer One",
-        "avatar": "https://example.com/avatar/streamer1.jpg",
-        "bio": "我是一个喜欢玩FPS的游戏主播"
+        "id": "user-id",
+        "username": "user123",
+        "displayName": "User Display Name",
+        "avatar": "https://via.placeholder.com/150",
+        "bio": "用户简介"
       },
       "stream": {
-        "id": "stream-id-1",
-        "title": "我的第一场直播！",
-        "description": "来和我一起玩吧！",
-        "category": {
-          "_id": "category-id-1",
-          "name": "游戏",
-          "slug": "games"
-        },
-        "thumbnailUrl": "https://example.com/thumbnails/stream1.jpg",
+        "id": "stream-id",
+        "title": "我的直播间",
+        "description": "直播描述",
+        "category": { "_id": "cat-id", "name": "游戏", "slug": "games" },
+        "thumbnail": "https://example.com/thumb.jpg",
         "viewerCount": 150,
-        "startedAt": "2023-03-26T10:00:00.000Z"
+        "startedAt": "2023-04-10T10:00:00.000Z"
       },
       "isLive": true
     }
   }
   ```
+
+### 根据用户名获取频道信息
+- **URL**: `/api/users/username/:username/channel`
+- **方法**: GET
+- **响应 (成功)**: (同上)
+- **响应 (用户不存在)**: `404 Not Found`
 
 ## 标签接口
 

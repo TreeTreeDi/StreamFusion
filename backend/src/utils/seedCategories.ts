@@ -110,7 +110,7 @@ const testStreamers = [
 const seedCategories = async () => {
   try {
     // 连接数据库
-    const mongoURI = process.env.MONGO_URI || 'mongodb://localhost:27017/twitch-clone';
+    const mongoURI = process.env.MONGODB_URI || 'mongodb://localhost:27017/twitch-clone';
     await mongoose.connect(mongoURI);
     console.log('MongoDB连接成功');
 

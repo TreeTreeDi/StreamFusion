@@ -15,6 +15,10 @@ import streamRoutes from './routes/stream.routes';
 import tagRoutes from './routes/tag.routes';
 import srsRoutes from './routes/srs.routes';
 
+// 引入错误处理中间件
+// import { errorHandler } from './middleware/errorHandler'; // 错误处理中间件暂未实现
+import { authenticate } from './middleware/auth'; // 导入 authenticate 中间件
+
 // 加载环境变量
 dotenv.config();
 
@@ -66,6 +70,11 @@ app.use(bannerRoutes.routes()).use(bannerRoutes.allowedMethods());
 app.use(streamRoutes.routes()).use(streamRoutes.allowedMethods());
 app.use(tagRoutes.routes()).use(tagRoutes.allowedMethods());
 app.use(srsRoutes.routes()).use(srsRoutes.allowedMethods());
+
+// 示例：需要认证的路由
+router.get('/protected', authenticate, async (ctx) => { // 使用 authenticate 中间件
+  ctx.body = { message: 'This is a protected route', user: ctx.state.user };
+});
 
 // 使用路由
 app.use(router.routes()).use(router.allowedMethods());

@@ -17,7 +17,7 @@ const mongoOptions = {
  */
 export const connectDB = async (): Promise<void> => {
   try {
-    const mongoURI = process.env.MONGO_URI || 'mongodb://localhost:27017/twitch-clone';
+    const mongoURI = process.env.MONGODB_URI || 'mongodb://localhost:27017/twitch-clone';
     
     await mongoose.connect(mongoURI);
     

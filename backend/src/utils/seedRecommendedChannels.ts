@@ -10,7 +10,7 @@ dotenv.config();
 // 连接到MongoDB
 const connectDB = async () => {
   try {
-    const mongoURI = process.env.MONGO_URI || 'mongodb://localhost:27017/twitch-clone';
+    const mongoURI = process.env.MONGODB_URI || 'mongodb://localhost:27017/twitch-clone';
     console.log(`尝试连接到数据库: ${mongoURI}`);
     await mongoose.connect(mongoURI);
     console.log('MongoDB连接成功');

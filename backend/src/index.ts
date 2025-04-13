@@ -15,7 +15,7 @@ const startServer = async () => {
     await connectDB();
     
     // 启动服务
-    app.listen(PORT, () => {
+    app.listen(PORT as number, '0.0.0.0', () => {
       console.log(`服务器已启动，监听端口: ${PORT}`);
       console.log(`运行环境: ${process.env.NODE_ENV}`);
     });

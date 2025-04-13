@@ -78,6 +78,39 @@ export interface StreamKeyResponse {
 // 开启直播响应接口（复用AuthResponse，因为返回用户信息）
 // export interface EnableStreamingResponse extends AuthResponse {}
 
+// 直播流信息（频道数据中包含）
+export interface ChannelStreamInfo {
+  id: string;
+  title: string;
+  description?: string;
+  category: { _id: string; name: string; slug: string }; // 假设后端填充了分类信息
+  thumbnail?: string;
+  viewerCount: number;
+  startedAt: string;
+}
+
+// 频道信息响应接口
+export interface ChannelData {
+  user: {
+    id: string;
+    username: string;
+    displayName: string;
+    avatar?: string;
+    bio?: string;
+  };
+  stream: ChannelStreamInfo | null;
+  isLive: boolean;
+}
+
+export interface ChannelResponse {
+  success: boolean;
+  message: string;
+  data?: ChannelData;
+  status?: number;
+  error?: any;
+  timestamp?: number;
+}
+
 // 认证相关API
 export const authApi = {
   // 用户注册
@@ -177,6 +210,28 @@ export const authApi = {
       return {
         success: false,
         message: '开启直播功能请求失败',
+        error: error,
+      };
+    }
+  },
+};
+
+// 用户/频道相关API (可以创建一个新的 userApi 对象)
+export const userApi = {
+  // 根据用户名获取频道信息
+  getChannelByUsername: async (username: string): Promise<ChannelResponse> => {
+    try {
+      // 注意：后端目前是 /api/users/:userId/channel，需要调整后端或增加一个按用户名的接口
+      // 假设后端已添加 /api/users/username/:username/channel
+      const response = await api.get<ChannelResponse>(`/users/username/${username}/channel`);
+      return response.data;
+    } catch (error) {
+      if (axios.isAxiosError(error) && error.response) {
+        return error.response.data as ChannelResponse;
+      }
+      return {
+        success: false,
+        message: '获取频道信息失败',
         error: error,
       };
     }
