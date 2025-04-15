@@ -1,10 +1,10 @@
-import { app } from './app';
-import { connectDB } from './config/database';
+import { startServer } from './app';
 import dotenv from 'dotenv';
 
 // 加载环境变量
 dotenv.config();
 
+<<<<<<< HEAD
 // 定义端口
 const PORT = process.env.PORT || 5000;
 
@@ -25,6 +25,8 @@ const startServer = async () => {
   }
 };
 
+=======
+>>>>>>> list
 // 处理未捕获的异常
 process.on('uncaughtException', (err) => {
   console.error('未捕获的异常', err);

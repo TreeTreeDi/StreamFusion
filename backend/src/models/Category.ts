@@ -51,7 +51,7 @@ const CategorySchema: Schema = new Schema({
 });
 
 // 创建索引以优化查询性能
-CategorySchema.index({ slug: 1 });
+// CategorySchema.index({ slug: 1 });
 CategorySchema.index({ viewerCount: -1 });
 CategorySchema.index({ streamCount: -1 });
 

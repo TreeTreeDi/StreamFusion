@@ -8,6 +8,7 @@ front/.env.development.local
 front/.env.test.local
 front/.env.production.local
 
+
 backend/node_modules/
 backend/.env
 backend/.env.local
