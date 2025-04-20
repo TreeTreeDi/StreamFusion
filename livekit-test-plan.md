@@ -1,69 +1,131 @@
-# 计划：创建 LiveKit 直播测试页面
+# LiveKit 流式页面重构方案
 
-## 目标
+## 一、目标拆解
+1. 抽象可复用组件  
+   - **VideoArea**：本地与远端视频区域  
+   - **ChatPanel**：消息列表与输入框  
+2. 逻辑绑定  
+   - 保留现有 Room / Track 事件与状态管理  
+   - 新增 LiveKit DataTrack 创建、发布、接收  
+3. 样式设计（暗黑模式优先）  
+   - 深色背景与高亮按钮  
+   - Tailwind CSS 主题扩展  
+   - 可访问性：`aria-label`、键盘导航  
 
-在前端 `front/` 项目中创建一个新的页面，用于测试 LiveKit 的直播功能，支持用户作为主播发起直播或作为观众观看直播。
+## 二、目录与文件
+```
+front/src/app/livekit-test/
+├── components/
+│   ├── VideoArea.tsx
+│   └── ChatPanel.tsx
+├── page.tsx
+└── styles/
+    └── livekit-test.css
+```
 
-## 前提条件
+## 三、组件设计
 
-*   前端项目使用 Next.js App Router 结构。
-*   后端已提供生成 LiveKit 访问令牌 (Access Token) 的接口。
-*   UI 风格使用基础界面即可。
+### 1. VideoArea.tsx
+Props:
+- `localRef: RefObject<HTMLVideoElement>`
+- `isStreaming: boolean`
+- `isCamEnabled: boolean`
+- `participants: Map<string, RemoteParticipant>`
+- `tracks: Map<string, RemoteTrack[]>`
 
-## 计划步骤
+职责：
+- 渲染本地摄像头预览及占位  
+- 多列/网格展示远端视频  
 
-1.  **创建新页面路由:**
-    *   在 `front/src/app/` 目录下创建路由文件 `livekit-test/page.tsx`。
+示例样式：
+```tsx
+<div className="bg-dark-surface p-2 rounded-lg">
+  <h2 className="text-accent-purple mb-2">My Video</h2>
+  <video ref={localRef} className="w-full aspect-video rounded" />
+</div>
+```
 
-2.  **安装 LiveKit 客户端 SDK:**
-    *   在 `front/` 目录下执行 `pnpm add livekit-client` (或相应的包管理器命令)。
+### 2. ChatPanel.tsx
+Props:
+- `room: Room`
+- `identity: string`
 
-3.  **实现基础 UI 组件:**
-    *   **输入区域:** 提供用户名和房间名输入框。
-    *   **控制按钮:**
-        *   “加入房间”/“离开房间”按钮。
-        *   “开始直播”/“停止直播”按钮（仅主播可见）。
-        *   麦克风和摄像头切换按钮。
-    *   **视频显示区域:**
-        *   一个用于显示本地视频预览的区域。
-        *   一个用于网格化显示所有远程参与者视频的区域。
+State:
+- `messages: Array<{ from: string; text: string; timestamp: Date }>`
+- `input: string`
 
-4.  **实现 LiveKit 连接逻辑:**
-    *   **获取 Token:** 调用现有的后端接口获取 LiveKit 访问令牌。
-    *   **连接管理:** 使用 `livekit-client` SDK 管理与 LiveKit 服务器的连接、断开连接。
-    *   **角色处理:** 用户加入时，根据选择的角色（主播/观众）决定是否自动发布本地音视频。
+核心逻辑：
+```ts
+useEffect(() => {
+  const dt = room.localParticipant.createDataTrack();
+  room.localParticipant.publishDataTrack(dt);
+  room.on(RoomEvent.DataReceived, (_src, payload) => {
+    const msg = JSON.parse(payload.toString());
+    setMessages(prev => [...prev, { ...msg, timestamp: new Date(msg.timestamp) }]);
+  });
+  return () => dt.stop();
+}, [room]);
 
-5.  **实现媒体流处理:**
-    *   **发布 (主播):** 获取本地摄像头和麦克风权限，创建并发布本地音视频轨道。
-    *   **订阅 (主播和观众):** 监听房间事件，自动订阅并渲染远程参与者的音视频轨道。
-    *   **UI 更新:** 动态添加/移除参与者的视频/音频元素。
+function sendMessage() {
+  dt.send(JSON.stringify({ from: identity, text: input, timestamp: Date.now() }));
+  setInput('');
+}
+```
 
-6.  **状态管理:**
-    *   使用 React Hooks (`useState`, `useEffect` 等) 管理房间连接状态、参与者列表、媒体轨道状态等。
+示例样式：
+```tsx
+<div className="flex flex-col bg-dark-surface rounded-lg p-4 w-80 h-full">
+  <ul className="flex-1 overflow-auto space-y-2 mb-2">
+    {messages.map((m, i) => (
+      <li key={i} className="text-sm">
+        <span className="font-bold">{m.from}:</span> {m.text}
+      </li>
+    ))}
+  </ul>
+  <div className="flex">
+    <input
+      value={input}
+      onChange={e => setInput(e.target.value)}
+      className="flex-1 bg-dark-bg text-white p-2 rounded-l focus:outline-accent-purple"
+    />
+    <button
+      onClick={sendMessage}
+      className="bg-accent-purple text-white px-4 rounded-r hover:bg-purple-600"
+    >
+      发送
+    </button>
+  </div>
+</div>
+```
 
-## 组件交互流程
-
+## 四、数据流与依赖
 ```mermaid
-graph TD
-    A[用户进入页面 /livekit-test] --> B(输入用户名和房间名);
-    B --> C{选择角色: 主播/观众};
-    C -- 主播 --> D(点击 "加入房间");
-    C -- 观众 --> D;
-    D --> E{调用后端 Token 接口};
-    E --> F[使用 Token 连接 LiveKit 房间];
-    F -- 连接成功 --> G{渲染基础 UI};
-    G -- 主播 --> H(点击 "开始直播");
-    H --> I[获取本地音视频并发布];
-    G -- 观众/主播 --> J[监听并订阅远程参与者音视频];
-    I --> K(在本地预览区显示自己);
-    J --> L(在远程视频区显示他人);
-    M[用户操作: 开/关音视频] --> N(更新 Track 状态);
-    O[用户点击 "离开房间"] --> P[断开 LiveKit 连接];
+flowchart LR
+  A[页面(page.tsx)] --> B[VideoArea]
+  A --> C[ChatPanel]
+  B -->|TrackEvents| LiveKitServer
+  C -->|DataTrack| LiveKitServer
+```
 
-    subgraph LiveKit交互
-        I; J; N; P;
-    end
+## 五、开发步骤
+1. 创建 `components/` 与 `styles/` 目录  
+2. 实现 `VideoArea.tsx`，提取 page.tsx 中视频相关 JSX  
+3. 实现 `ChatPanel.tsx`，添加 DataTrack 逻辑与 UI  
+4. 修改 `page.tsx`：引入组件并传递 props，清理内联样式  
+5. 编写或扩展 `tailwind.config.js` 主题  
+6. 验证可访问性：ARIA 与键盘操作  
 
-    subgraph UI更新
-        K; L;
-    end
+## 六、暗黑主题配置（tailwind.config.js）
+```js
+module.exports = {
+  theme: {
+    extend: {
+      colors: {
+        'dark-bg': '#0e0e10',
+        'dark-surface': '#18181b',
+        'dark-border': '#2a2a2d',
+        'accent-purple': '#a970ff',
+      },
+    },
+  },
+};

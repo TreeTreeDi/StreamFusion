@@ -2,78 +2,58 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { Room, RoomEvent, RemoteParticipant, RemoteTrackPublication, RemoteTrack, Participant, Track } from 'livekit-client';
-import { getLiveKitToken } from '@/lib/livekit'; // Import the function
+import { getLiveKitToken } from '@/lib/livekit';
+// Use existing components as requested
+import VideoArea from './components/VideoArea'; // Keep existing VideoArea
+import ChatPanel from './components/ChatPanel'; // Use ChatPanel
+import ParticipantTrack from './components/ParticipantTrack'; // Keep using this
 
 // Get LiveKit URL from environment variable
 const LIVEKIT_URL = process.env.NEXT_PUBLIC_LIVEKIT_WS_URL;
-// Add a check for the environment variable
 if (!LIVEKIT_URL) {
   console.error("NEXT_PUBLIC_LIVEKIT_WS_URL is not set in environment variables.");
-  // Consider adding a user-facing error message here
 }
 
 export default function LiveKitTestPage() {
   const [room, setRoom] = useState<Room | null>(null);
   const [username, setUsername] = useState('');
   const [roomName, setRoomName] = useState('');
-  const [role, setRole] = useState<'host' | 'viewer'>('viewer'); // 'host' or 'viewer'
+  const [role, setRole] = useState<'host' | 'viewer'>('viewer');
   const [isConnected, setIsConnected] = useState(false);
-  const [isStreaming, setIsStreaming] = useState(false); // Host streaming state
-  const [isMicEnabled, setIsMicEnabled] = useState(true); // Local mic state
-  const [isCamEnabled, setIsCamEnabled] = useState(true); // Local cam state
+  const [isStreaming, setIsStreaming] = useState(false);
+  const [isMicEnabled, setIsMicEnabled] = useState(true);
+  const [isCamEnabled, setIsCamEnabled] = useState(true);
   const [remoteParticipants, setRemoteParticipants] = useState<Map<string, RemoteParticipant>>(new Map());
-  // State to hold subscribed remote tracks: Map<ParticipantSID, RemoteTrack[]>
   const [remoteTracks, setRemoteTracks] = useState<Map<string, RemoteTrack[]>>(new Map());
 
-  // Ref for local video element
   const localVideoRef = useRef<HTMLVideoElement>(null);
-  // No longer need remoteVideoRefs
 
-
-  // --- Connection Logic ---
-
+  // --- Connection Logic (Keep existing logic) ---
   const handleJoin = async () => {
-    if (!username || !roomName) return;
+    if (!username || !roomName || !LIVEKIT_URL) return;
     console.log(`Joining room ${roomName} as ${username} (${role})`);
-
     try {
-      // 1. Fetch Token using the library function
-      console.log('Requesting LiveKit token...');
       const isPublisher = role === 'host';
       const tokenResponse = await getLiveKitToken(roomName, isPublisher);
-
       if (!tokenResponse.success || !tokenResponse.data?.token) {
         throw new Error(tokenResponse.message || 'Failed to get LiveKit token');
       }
       const token = tokenResponse.data.token;
-      // Optionally use identity from response if needed: const identity = tokenResponse.data.identity;
       console.log('LiveKit token received successfully.');
-      // 2. Create and Connect Room
-      const newRoom = new Room({
-        // Automatically manage quality based on visibility
-        adaptiveStream: true,
-        // Optimize publishing bandwidth and CPU for published tracks
-        dynacast: true,
-        // Publish settings
-        // publishDefaults: {
-        //   videoEncoding: videoPresets.h1080, // Example preset
-        //   screenShareEncoding: videoPresets.h1080, // Example preset
-        // },
-      });
 
+      const newRoom = new Room({
+        adaptiveStream: true,
+        dynacast: true,
+      });
       setRoom(newRoom);
 
-      // 3. Setup Event Listeners BEFORE connecting
       newRoom
         .on(RoomEvent.ParticipantConnected, (participant: RemoteParticipant) => {
-          console.log('[Viewer Log] Participant connected:', participant.identity, 'SID:', participant.sid);
-          // Log existing tracks for this participant upon connection
-          // Correct property is trackPublications
+          console.log('[React Way] Participant connected:', participant.identity, 'SID:', participant.sid);
           participant.trackPublications.forEach((publication: RemoteTrackPublication) => {
             console.log(`[React Way] Checking existing track publication on connect: ${publication.kind}, SID: ${publication.trackSid}, Subscribed: ${publication.isSubscribed}`);
             if (publication.isSubscribed && publication.track) {
                console.log(`[React Way] Adding existing subscribed track ${publication.trackSid} on connect.`);
-               // Add track to state
                setRemoteTracks((prevTracks) => {
                  const newTracksMap = new Map(prevTracks);
                  const participantTracks = newTracksMap.get(participant.sid) || [];
@@ -88,7 +68,6 @@ export default function LiveKitTestPage() {
         })
         .on(RoomEvent.ParticipantDisconnected, (participant: RemoteParticipant) => {
           console.log('[React Way] Participant disconnected:', participant.identity, 'SID:', participant.sid);
-          // Remove participant from both states
           setRemoteParticipants((prev) => {
             const newMap = new Map(prev);
             newMap.delete(participant.sid);
@@ -96,40 +75,29 @@ export default function LiveKitTestPage() {
           });
           setRemoteTracks((prev) => {
             const newMap = new Map(prev);
-            newMap.delete(participant.sid); // Remove all tracks for this participant
+            newMap.delete(participant.sid);
             console.log(`[React Way] Removed tracks for disconnected participant ${participant.sid}`);
             return newMap;
           });
         })
-        .on(RoomEvent.TrackSubscribed, (track, publication, participant) => {
-          console.log(`[Viewer Log] Received TrackSubscribed event: ${track.kind} from ${participant.identity} (Track SID: ${track.sid})`);
-          handleTrackSubscribed(track, publication, participant);
-        })
-        .on(RoomEvent.TrackUnsubscribed, (track, publication, participant) => {
-          console.log(`[Viewer Log] Received TrackUnsubscribed event: ${track.kind} from ${participant.identity} (Track SID: ${track.sid})`);
-          handleTrackUnsubscribed(track, publication, participant);
-        })
+        .on(RoomEvent.TrackSubscribed, handleTrackSubscribed) // Use handler function
+        .on(RoomEvent.TrackUnsubscribed, handleTrackUnsubscribed) // Use handler function
+        .on(RoomEvent.DataReceived, handleDataReceived) // Add listener for chat messages
         .on(RoomEvent.Disconnected, () => {
           console.log('Disconnected from room');
           setIsConnected(false);
           setIsStreaming(false);
           setRoom(null);
           setRemoteParticipants(new Map());
-          setRemoteTracks(new Map()); // Clear remote tracks on disconnect
+          setRemoteTracks(new Map());
+          // Clear chat messages on disconnect if needed
         });
 
-
-      // 4. Connect
-      // Ensure LIVEKIT_URL is checked before connecting
-      if (!LIVEKIT_URL) {
-        throw new Error("LiveKit URL is not configured.");
-      }
       await newRoom.connect(LIVEKIT_URL, token);
       console.log('Connected to room:', newRoom.name);
       setIsConnected(true);
-      // Initialize with existing remote participants
       setRemoteParticipants(new Map(newRoom.remoteParticipants));
-      // Also initialize remote tracks for existing participants upon joining
+
       const initialTracks = new Map<string, RemoteTrack[]>();
       newRoom.remoteParticipants.forEach((participant) => {
         const tracks: RemoteTrack[] = [];
@@ -145,57 +113,39 @@ export default function LiveKitTestPage() {
       });
       setRemoteTracks(initialTracks);
 
-      // If host, maybe auto-start stream or enable button
       if (role === 'host') {
-        // Enable the "Start Streaming" button, actual streaming logic is separate
         console.log('Host connected, ready to stream.');
       }
-
-
     } catch (error) {
       console.error('Error joining room:', error);
       alert(`Failed to join room: ${error instanceof Error ? error.message : String(error)}`);
-      setRoom(null); // Clean up room state on error
+      setRoom(null);
     }
   };
 
   const handleLeave = async () => {
     console.log('Leaving room...');
-    console.log('Leaving room...');
     if (room) {
-       // Ensure tracks are unpublished before disconnecting
        if (role === 'host' && isStreaming) {
-         await room.localParticipant.setCameraEnabled(false);
-         await room.localParticipant.setMicrophoneEnabled(false);
-         setIsStreaming(false); // Update state immediately
-         // Detach local video
-         if (localVideoRef.current && localVideoRef.current.srcObject) {
-            const stream = localVideoRef.current.srcObject as MediaStream;
-            stream.getTracks().forEach(track => track.stop());
-            localVideoRef.current.srcObject = null;
-         }
+         await handleStopStream(); // Stop stream before disconnecting
        }
-       await room.disconnect(); // This triggers the 'Disconnected' event listener for further cleanup
+       await room.disconnect(); // Triggers 'Disconnected' event
     } else {
-      // Manual cleanup if room object wasn't fully set or connection failed midway
-      // (States are already reset in the Disconnected event or here if no room)
       setIsConnected(false);
       setIsStreaming(false);
       setRemoteParticipants(new Map());
-      setIsMicEnabled(true); // Reset local state
+      setRemoteTracks(new Map());
+      setIsMicEnabled(true);
       setIsCamEnabled(true);
     }
   };
 
-  // --- Media Logic ---
-
-  // Update state when a track is subscribed
+  // --- Media Logic (Keep existing logic) ---
   const handleTrackSubscribed = (track: RemoteTrack, publication: RemoteTrackPublication, participant: RemoteParticipant) => {
     console.log(`[React Way] Track subscribed: ${track.sid} from ${participant.identity}`);
     setRemoteTracks((prevTracks) => {
       const newTracksMap = new Map(prevTracks);
       const participantTracks = newTracksMap.get(participant.sid) || [];
-      // Avoid adding duplicate tracks
       if (!participantTracks.some(t => t.sid === track.sid)) {
         newTracksMap.set(participant.sid, [...participantTracks, track]);
         console.log(`[React Way] Added track ${track.sid} to state for participant ${participant.sid}`);
@@ -205,7 +155,7 @@ export default function LiveKitTestPage() {
       return newTracksMap;
     });
   };
-  // Update state when a track is unsubscribed
+
   const handleTrackUnsubscribed = (track: RemoteTrack, publication: RemoteTrackPublication, participant: RemoteParticipant) => {
     console.log(`[React Way] Track unsubscribed: ${track.sid} from ${participant.identity}`);
     setRemoteTracks((prevTracks) => {
@@ -214,7 +164,7 @@ export default function LiveKitTestPage() {
       const filteredTracks = participantTracks.filter(t => t.sid !== track.sid);
 
       if (filteredTracks.length === 0) {
-        newTracksMap.delete(participant.sid); // Remove participant entry if no tracks left
+        newTracksMap.delete(participant.sid);
         console.log(`[React Way] Removed participant ${participant.sid} from remoteTracks state (no tracks left).`);
       } else {
         newTracksMap.set(participant.sid, filteredTracks);
@@ -228,14 +178,12 @@ export default function LiveKitTestPage() {
     if (!room || role !== 'host') return;
     console.log('Starting stream...');
     try {
-      // Publish camera and microphone tracks
       await room.localParticipant.setCameraEnabled(true);
       await room.localParticipant.setMicrophoneEnabled(true);
       setIsStreaming(true);
       setIsCamEnabled(true);
       setIsMicEnabled(true);
 
-      // Attach local video track to the video element
       const localVideoTrack = room.localParticipant.getTrackPublication(Track.Source.Camera)?.videoTrack;
       if (localVideoTrack && localVideoRef.current) {
         localVideoTrack.attach(localVideoRef.current);
@@ -246,7 +194,6 @@ export default function LiveKitTestPage() {
     } catch (error) {
       console.error('Error starting stream:', error);
       alert(`Failed to start stream: ${error instanceof Error ? error.message : String(error)}`);
-      // Attempt to revert state if publishing failed
       await room.localParticipant.setCameraEnabled(false);
       await room.localParticipant.setMicrophoneEnabled(false);
       setIsStreaming(false);
@@ -257,23 +204,20 @@ export default function LiveKitTestPage() {
     if (!room || role !== 'host' || !isStreaming) return;
     console.log('Stopping stream...');
     try {
-      // Unpublish camera and microphone tracks
       await room.localParticipant.setCameraEnabled(false);
       await room.localParticipant.setMicrophoneEnabled(false);
       setIsStreaming(false);
-      setIsCamEnabled(false); // Reflect the state change
+      setIsCamEnabled(false);
       setIsMicEnabled(false);
 
-      // Detach local video track from the video element
       if (localVideoRef.current && localVideoRef.current.srcObject) {
         const stream = localVideoRef.current.srcObject as MediaStream;
-        stream.getTracks().forEach(track => track.stop()); // Stop the tracks
-        localVideoRef.current.srcObject = null; // Clear the srcObject
+        stream.getTracks().forEach(track => track.stop());
+        localVideoRef.current.srcObject = null;
         console.log('Detached and stopped local video track.');
       }
     } catch (error) {
       console.error('Error stopping stream:', error);
-      // State might be inconsistent here, but we primarily care about unpublishing
     }
   };
 
@@ -298,7 +242,6 @@ export default function LiveKitTestPage() {
           await room.localParticipant.setCameraEnabled(newCamState);
           setIsCamEnabled(newCamState);
 
-          // Re-attach or detach video based on the new state
           const localVideoTrack = room.localParticipant.getTrackPublication(Track.Source.Camera)?.videoTrack;
           if (newCamState && localVideoTrack && localVideoRef.current) {
               localVideoTrack.attach(localVideoRef.current);
@@ -309,164 +252,132 @@ export default function LiveKitTestPage() {
               localVideoRef.current.srcObject = null;
               console.log('Detached and stopped local video track.');
           }
-
       } catch (error) {
           console.error('Error toggling camera:', error);
           alert(`Failed to toggle cam: ${error instanceof Error ? error.message : String(error)}`);
-          // Revert state if toggle failed
-          setIsCamEnabled(!newCamState);
+          setIsCamEnabled(!newCamState); // Revert state if toggle failed
       }
   };
 
+  // --- Chat Logic ---
+  const [chatMessages, setChatMessages] = useState<{ identity: string; message: string }[]>([]);
+  const encoder = new TextEncoder();
+  const decoder = new TextDecoder();
 
-  // Log remote participants state on render
-  // console.log('[React Way] Rendering component. Remote participants:', remoteParticipants);
-  // console.log('[React Way] Rendering component. Remote tracks:', remoteTracks);
+  const handleDataReceived = (payload: Uint8Array, participant?: RemoteParticipant) => {
+    const messageData = JSON.parse(decoder.decode(payload));
+    const identity = participant?.identity ?? 'Server'; // Or handle identity based on your logic
+    console.log(`Received message from ${identity}:`, messageData.message);
+    setChatMessages((prev) => [...prev, { identity: identity, message: messageData.message }]);
+  };
 
+  const sendChatMessage = async (message: string) => {
+    if (room && message.trim()) {
+      const payload = encoder.encode(JSON.stringify({ message }));
+      await room.localParticipant.publishData(payload, { reliable: true });
+      // Optionally add own message to local state immediately
+      setChatMessages((prev) => [...prev, { identity: username || 'Me', message: message }]);
+      console.log('Sent message:', message);
+    }
+  };
+
+
+  // --- UI Rendering ---
   return (
-    <div style={{ padding: '20px', display: 'flex', flexDirection: 'column', gap: '15px' }}>
-      <h1>LiveKit Test Page</h1>
-
-      {!isConnected ? (
-        <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
-          <input
-            type="text"
-            placeholder="Username"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            style={{ padding: '8px' }}
-          />
-          <input
-            type="text"
-            placeholder="Room Name"
-            value={roomName}
-            onChange={(e) => setRoomName(e.target.value)}
-            style={{ padding: '8px' }}
-          />
-          <select value={role} onChange={(e) => setRole(e.target.value as 'host' | 'viewer')} style={{ padding: '8px' }}>
-            <option value="viewer">Viewer</option>
-            <option value="host">Host</option>
-          </select>
-          <button onClick={handleJoin} disabled={!username || !roomName} style={{ padding: '8px 15px' }}>
-            Join Room
-          </button>
-        </div>
-      ) : (
-        <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
-           <span>Connected as <strong>{username}</strong> in room <strong>{roomName}</strong> ({role})</span>
-           {role === 'host' && !isStreaming && (
-             <button onClick={handleStartStream} style={{ padding: '8px 15px' }}>Start Streaming</button>
-           )}
-           {role === 'host' && isStreaming && (
-             <button onClick={handleStopStream} style={{ padding: '8px 15px' }}>Stop Streaming</button>
-           )}
-           {/* Show mic/cam status only when connected */}
-           <button onClick={toggleMic} style={{ padding: '8px 15px' }}>{isMicEnabled ? 'Mute Mic' : 'Unmute Mic'}</button>
-           <button onClick={toggleCam} style={{ padding: '8px 15px' }}>{isCamEnabled ? 'Stop Cam' : 'Start Cam'}</button>
-           <button onClick={handleLeave} style={{ padding: '8px 15px' }}>Leave Room</button>
-        </div>
-      )}
-
-      <div style={{ display: 'flex', gap: '20px', marginTop: '20px' }}>
-        {/* Local Video Preview Area (Only if host and streaming) */}
-        {role === 'host' && isConnected && (
-          <div style={{ border: '1px solid #ccc', padding: '10px', minWidth: '320px', minHeight: '240px' }}>
-            <h2>My Video</h2>
-            <video ref={localVideoRef} autoPlay muted playsInline width="320" height="240" style={{ backgroundColor: '#eee', display: isCamEnabled && isStreaming ? 'block' : 'none' }}></video>
-            {/* Show placeholder text when camera is off or not streaming */}
-            {(!isCamEnabled || !isStreaming) && (
-              <div style={{ width: '320px', height: '240px', background: '#eee', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                {isStreaming ? 'Camera Off' : 'Not Streaming'}
-              </div>
-            )}
+    <div className="flex flex-col h-[90vh] bg-gray-900 text-white">
+      {/* Header/Controls Area */}
+      <div className="p-4 bg-gray-800 shadow-md">
+        {!isConnected ? (
+          <div className="flex gap-4 items-center">
+            <input
+              type="text"
+              placeholder="Username"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              className="p-2 rounded bg-gray-700 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-purple-500"
+            />
+            <input
+              type="text"
+              placeholder="Room Name"
+              value={roomName}
+              onChange={(e) => setRoomName(e.target.value)}
+              className="p-2 rounded bg-gray-700 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-purple-500"
+            />
+            <select
+              value={role}
+              onChange={(e) => setRole(e.target.value as 'host' | 'viewer')}
+              className="p-2 rounded bg-gray-700 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-purple-500"
+            >
+              <option value="viewer">Viewer</option>
+              <option value="host">Host</option>
+            </select>
+            <button
+              onClick={handleJoin}
+              disabled={!username || !roomName || !LIVEKIT_URL}
+              className="px-4 py-2 bg-purple-600 hover:bg-purple-700 rounded disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              Join Room
+            </button>
+          </div>
+        ) : (
+          <div className="flex gap-4 items-center justify-between">
+            <span className="font-semibold">
+              Connected as <strong className="text-purple-400">{username}</strong> in room <strong className="text-purple-400">{roomName}</strong> ({role})
+            </span>
+            <div className="flex gap-2">
+              {role === 'host' && !isStreaming && (
+                <button onClick={handleStartStream} className="px-4 py-2 bg-green-600 hover:bg-green-700 rounded">Start Streaming</button>
+              )}
+              {role === 'host' && isStreaming && (
+                <button onClick={handleStopStream} className="px-4 py-2 bg-red-600 hover:bg-red-700 rounded">Stop Streaming</button>
+              )}
+              <button onClick={toggleMic} className={`px-4 py-2 rounded ${isMicEnabled ? 'bg-gray-600 hover:bg-gray-700' : 'bg-red-600 hover:bg-red-700'}`}>
+                {isMicEnabled ? 'Mute Mic' : 'Unmute Mic'}
+              </button>
+              <button onClick={toggleCam} className={`px-4 py-2 rounded ${isCamEnabled ? 'bg-gray-600 hover:bg-gray-700' : 'bg-red-600 hover:bg-red-700'}`}>
+                {isCamEnabled ? 'Stop Cam' : 'Start Cam'}
+              </button>
+              <button onClick={handleLeave} className="px-4 py-2 bg-gray-600 hover:bg-gray-700 rounded">Leave Room</button>
+            </div>
           </div>
         )}
-        {/* Remote Participants Video Area */}
-        <div style={{ border: '1px solid #ccc', padding: '10px', flexGrow: 1 }}>
-          <h2>Remote Participants ({remoteParticipants.size})</h2>
-          <div id="remote-participants-grid" style={{ display: 'flex', flexWrap: 'wrap', gap: '10px' }}>
-            {/* Iterate over participants */}
-            {Array.from(remoteParticipants.values()).map(participant => (
-              <div key={participant.sid} style={{ border: '1px solid #eee', padding: '5px', display: 'flex', flexDirection: 'column', alignItems: 'center', minWidth: '250px' }}>
-                <p style={{ margin: '0 0 5px 0', fontWeight: 'bold' }}>{participant.identity}</p>
-                {/* Iterate over tracks for this participant from state */}
-                {(remoteTracks.get(participant.sid) || []).map(track => (
-                  // Render the dedicated component for each track
-                  <ParticipantTrack key={track.sid} track={track} />
-                ))}
-              </div>
-            ))}
-            {isConnected && remoteParticipants.size === 0 && <p>Waiting for participants...</p>}
-            {!isConnected && <p>Not connected</p>}
-          </div>
+      </div>
+
+      {/* Main Content Area (Video + Chat) */}
+      <div className="flex flex-1 overflow-hidden">
+        {/* Video Area (Left Side) - Using existing component */}
+        <div className="flex-1 p-4 overflow-y-auto bg-black"> {/* Added bg-black for video area */}
+          {isConnected ? (
+            <VideoArea
+              localRef={localVideoRef} // Corrected prop name
+              participants={remoteParticipants} // Corrected prop name
+              tracks={remoteTracks} // Corrected prop name
+              isStreaming={isStreaming}
+              isCamEnabled={isCamEnabled}
+              role={role}
+              // Removed ParticipantTrackComponent prop
+            />
+          ) : (
+            <div className="flex items-center justify-center h-full text-gray-500">
+              Connect to a room to see the stream.
+            </div>
+          )}
+        </div>
+
+        {/* Chat Panel (Right Side) - Using existing component name */}
+        <div className="w-80 bg-gray-800 border-l border-gray-700 flex flex-col">
+           {isConnected ? (
+             <ChatPanel
+               messages={chatMessages}
+               onSendMessage={sendChatMessage}
+             />
+           ) : (
+             <div className="flex items-center justify-center h-full text-gray-500">
+               Connect to chat.
+             </div>
+           )}
         </div>
       </div>
     </div>
   );
-}
-
-
-// --- ParticipantTrack Component ---
-// This component handles rendering a single remote track
-
-interface ParticipantTrackProps {
-  track: RemoteTrack;
-}
-
-function ParticipantTrack({ track }: ParticipantTrackProps) {
-  const containerRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const container = containerRef.current;
-    if (!container) {
-      console.warn(`[ParticipantTrack] Container ref not ready for track ${track.sid}`);
-      return;
-    }
-
-    console.log(`[ParticipantTrack] Attaching track ${track.sid} (${track.kind})`);
-    let element: HTMLMediaElement | null = null;
-    try {
-        element = track.attach(); // LiveKit creates <video> or <audio>
-        // Apply styles
-        if (track.kind === Track.Kind.Video) {
-            element.style.maxWidth = '240px';
-            element.style.maxHeight = '180px';
-            element.muted = false; // Ensure remote video is not muted by default
-            element.autoplay = true;
-            (element as HTMLVideoElement).playsInline = true; // Cast to HTMLVideoElement
-        } else {
-            // For audio tracks, ensure they play
-            element.autoplay = true;
-        }
-        container.appendChild(element); // Add it to our container
-        console.log(`[ParticipantTrack] Attached track ${track.sid} successfully.`);
-    } catch (e) {
-        console.error(`[ParticipantTrack] track.attach() failed for track ${track.sid}:`, e);
-        return; // Stop if attach fails
-    }
-
-
-    // Cleanup function
-    return () => {
-      console.log(`[ParticipantTrack] Detaching track ${track.sid}`);
-      if (element) {
-          track.detach(element);
-          // Check if element is still a child before removing (might already be removed by other means)
-          if (container.contains(element)) {
-              try {
-                  container.removeChild(element);
-                  console.log(`[ParticipantTrack] Removed media element for track ${track.sid}`);
-              } catch (removeError) {
-                  console.warn(`[ParticipantTrack] Error removing media element for track ${track.sid}:`, removeError);
-              }
-          }
-      } else {
-          console.warn(`[ParticipantTrack] Cleanup: Media element was null for track ${track.sid}`);
-      }
-    };
-  }, [track]); // Re-run if the track prop changes
-
-  // Render the container div that will hold the media element
-  // Add a class based on track kind for potential styling
-  return <div ref={containerRef} className={`track-${track.kind}`} style={{ marginTop: '5px' }}></div>; // Move closing parenthesis here
 }
