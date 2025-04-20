@@ -1,14 +1,12 @@
-import { Suspense } from "react";
+'use client'; // 需要标记为客户端组件以使用 hooks
+
+import { Suspense, useState, useEffect } from "react"; // 导入 useState, useEffect
+import { useRouter } from 'next/navigation';
 import Image from "next/image";
 import Link from "next/link";
+import { Button } from "@/components/ui/button";
 
-// 模拟的静态数据
-const liveStreams = [
-  { id: '1', title: '🔴 新赛季冲分！中单法王', streamer: '大神玩家A', category: '英雄联盟', viewers: 1234, thumbnailUrl: 'https://picsum.photos/seed/stream1/440/248' },
-  { id: '2', title: '轻松一刻，聊聊日常', streamer: '聊天主播B', category: 'Just Chatting', viewers: 987, thumbnailUrl: 'https://picsum.photos/seed/stream2/440/248' },
-  { id: '3', title: 'Valorant 精彩集锦 | !抽奖', streamer: '枪王C', category: 'Valorant', viewers: 2500, thumbnailUrl: 'https://picsum.photos/seed/stream3/440/248' },
-  { id: '4', title: '深夜食堂，一起看剧', streamer: '陪伴主播D', category: 'Just Chatting', viewers: 555, thumbnailUrl: 'https://picsum.photos/seed/stream4/440/248' },
-];
+// 移除静态 liveStreams 数据
 
 const preferredCategories = [
   { id: 'lol', name: '英雄联盟', viewers: '5万', coverUrl: 'https://static-cdn.jtvnw.net/ttv-boxart/21779-188x250.jpg', tags: ['角色扮演', '策略'] },
@@ -38,17 +36,72 @@ const categoryStreams = {
 };
 
 export default function Home() {
+  const router = useRouter();
+  const [liveStreamsData, setLiveStreamsData] = useState<Stream[]>([]); // 添加 state
+  const [isLoading, setIsLoading] = useState(true); // 添加加载状态
+  const [error, setError] = useState<string | null>(null); // 添加错误状态
+
+  useEffect(() => {
+    const fetchLiveStreams = async () => {
+      setIsLoading(true);
+      setError(null);
+      try {
+        const response = await fetch('/api/livekit/rooms');
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data: Stream[] = await response.json();
+        // 为 API 返回的数据补充 StreamCard 需要的字段
+        const formattedData = data.map(stream => ({
+          ...stream,
+          title: stream.name || '未命名直播', // 使用 room name 作为 title
+          streamer: '主播', // 占位符，后续可从 metadata 获取
+          category: '直播中', // 占位符
+          viewers: stream.participantCount || 0,
+          thumbnailUrl: `https://picsum.photos/seed/${stream.name || stream.id}/440/248` // 临时缩略图
+        }));
+        setLiveStreamsData(formattedData);
+      } catch (e) {
+        console.error("Failed to fetch live streams:", e);
+        setError(e instanceof Error ? e.message : '获取直播列表失败');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchLiveStreams();
+    // 可以设置定时器轮询刷新
+    // const intervalId = setInterval(fetchLiveStreams, 30000); // 每 30 秒刷新一次
+    // return () => clearInterval(intervalId); // 清除定时器
+  }, []); // 空依赖数组，仅在挂载时运行
+
+  const handleStartStreaming = () => {
+    router.push('/dashboard');
+  };
+
   return (
     <div className="p-6 md:p-12 space-y-12">
+
+      {/* 新增开始直播按钮 */}
+      <div className="mb-6 text-right">
+        <Button onClick={handleStartStreaming}>
+          开始直播
+        </Button>
+      </div>
 
       {/* 正在直播 */}
       <section>
         <h2 className="text-2xl font-bold mb-4">正在直播</h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-          {liveStreams.map((stream) => (
-            <StreamCard key={stream.id} stream={stream} />
-          ))}
-        </div>
+        {isLoading && <p>加载中...</p>}
+        {error && <p className="text-red-500">错误: {error}</p>}
+        {!isLoading && !error && liveStreamsData.length === 0 && <p>当前没有直播。</p>}
+        {!isLoading && !error && liveStreamsData.length > 0 && (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+            {liveStreamsData.map((stream) => (
+              <StreamCard key={stream.id} stream={stream} />
+            ))}
+          </div>
+        )}
       </section>
 
       {/* 喜欢的类别 */}
@@ -84,8 +137,12 @@ export default function Home() {
 
 // --- 子组件 ---
 
+// 更新 Stream 接口以匹配 API 返回并包含 StreamCard 需要的字段
 interface Stream {
-  id: string;
+  id: string; // 来自 room.sid
+  name?: string; // 来自 room.name
+  participantCount?: number; // 来自 room.numParticipants
+  // 以下为 StreamCard 需要的补充字段
   title: string;
   streamer: string;
   category: string;
@@ -98,12 +155,13 @@ interface StreamCardProps {
 }
 
 function StreamCard({ stream }: StreamCardProps) {
+  // 修改 Link 的 href 指向观众观看页面
   return (
-    <Link href={`/live/${stream.streamer}`} className="group block space-y-2">
+    <Link href={`/dashboard?roomName=${encodeURIComponent(stream.name || stream.id)}&role=viewer`} className="group block space-y-2">
       <div className="relative aspect-video rounded-lg overflow-hidden transition-transform duration-200 ease-in-out group-hover:scale-105">
         <Image
           src={stream.thumbnailUrl}
-          alt={`${stream.title} 直播缩略图`}
+          alt={`${stream.title || stream.name} 直播缩略图`}
           fill
           className="object-cover"
           sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, (max-width: 1280px) 33vw, 25vw"
@@ -112,6 +170,7 @@ function StreamCard({ stream }: StreamCardProps) {
           直播
         </div>
         <div className="absolute bottom-2 left-2 bg-black/60 text-white text-xs px-1.5 py-0.5 rounded">
+          {/* 使用 participantCount */}
           {stream.viewers.toLocaleString()} 名观众
         </div>
       </div>
@@ -119,7 +178,9 @@ function StreamCard({ stream }: StreamCardProps) {
         {/* 占位符头像 */}
         <div className="w-9 h-9 rounded-full bg-muted flex-shrink-0 mt-1"></div>
         <div className="flex-1 min-w-0">
-          <h3 className="text-sm font-semibold truncate text-foreground group-hover:text-primary">{stream.title}</h3>
+          {/* 使用 name 或 title */}
+          <h3 className="text-sm font-semibold truncate text-foreground group-hover:text-primary">{stream.title || stream.name}</h3>
+          {/* 使用占位符 */}
           <p className="text-xs text-muted-foreground truncate">{stream.streamer}</p>
           <p className="text-xs text-muted-foreground truncate">{stream.category}</p>
         </div>
