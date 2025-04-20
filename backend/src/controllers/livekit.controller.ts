@@ -1,3 +1,4 @@
+import { randomBytes } from 'crypto'; // 导入 crypto
 import { Context } from 'koa';
 import { LiveKitService } from '../services/livekit.service';
 
@@ -30,24 +31,45 @@ export class LiveKitController {
         return;
       }
 
-      // 从认证信息获取用户ID (假设已经通过认证中间件)
-      const userId = ctx.state.user?.id || 'anonymous';
+      // --- 修改开始 ---
+      let identity: string;
+      const authenticatedUserId = ctx.state.user?.id; // 获取认证用户ID
 
-      // 生成令牌
+      if (isPublisher) {
+        // 主播必须是认证用户
+        if (!authenticatedUserId) {
+          ctx.status = 403; // Forbidden or 401 Unauthorized
+          ctx.body = { success: false, message: '只有认证用户才能成为主播' };
+          return;
+        }
+        identity = authenticatedUserId;
+      } else {
+        // 观众可以是认证用户或匿名访客
+        if (authenticatedUserId) {
+          identity = authenticatedUserId;
+        } else {
+          // 生成匿名访客ID
+          identity = `Guest-${randomBytes(4).toString('hex')}`;
+        }
+      }
+      // --- 修改结束 ---
+
+
+      // 使用确定的 identity 生成令牌
       let token: string;
       if (isPublisher) {
-        token = await this.livekitService.generateBroadcasterToken(userId, roomName);
+        // 传递 identity 给 service 方法 (假设 service 方法接受 identity)
+        token = await this.livekitService.generateBroadcasterToken(identity, roomName);
       } else {
-        token = await this.livekitService.generateViewerToken(userId, roomName);
+        token = await this.livekitService.generateViewerToken(identity, roomName);
       }
 
-      // 返回令牌
       ctx.status = 200;
       ctx.body = {
         success: true,
         data: {
           token,
-          identity: userId,
+          identity: identity, // 返回最终确定的 identity
           room: roomName
         }
       };
