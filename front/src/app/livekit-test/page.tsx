@@ -266,18 +266,29 @@ export default function LiveKitTestPage() {
 
   const handleDataReceived = (payload: Uint8Array, participant?: RemoteParticipant) => {
     const messageData = JSON.parse(decoder.decode(payload));
-    const identity = participant?.identity ?? 'Server'; // Or handle identity based on your logic
+
+    // **优先从消息负载中获取发送者用户名**
+    const senderUsername = messageData.senderUsername;
+    // **如果负载中没有，则回退到 participant.identity**
+    const identity = senderUsername ?? participant?.identity ?? 'Unknown User';
+
     console.log(`Received message from ${identity}:`, messageData.message);
+    // 使用获取到的 identity 更新聊天状态
     setChatMessages((prev) => [...prev, { identity: identity, message: messageData.message }]);
   };
 
   const sendChatMessage = async (message: string) => {
     if (room && message.trim()) {
-      const payload = encoder.encode(JSON.stringify({ message }));
+      // **在消息负载中包含 senderUsername**
+      const payload = encoder.encode(JSON.stringify({
+        message: message,
+        senderUsername: username || 'Anonymous' // 使用当前用户的 username
+      }));
       await room.localParticipant.publishData(payload, { reliable: true });
       // Optionally add own message to local state immediately
+      // 使用自己的 username 显示自己的消息
       setChatMessages((prev) => [...prev, { identity: username || 'Me', message: message }]);
-      console.log('Sent message:', message);
+      console.log('Sent message:', message, 'as', username || 'Anonymous');
     }
   };
 
