@@ -1,10 +1,13 @@
 'use client'; // 需要标记为客户端组件以使用 hooks
 
-import { Suspense, useState, useEffect } from "react"; // 导入 useState, useEffect
+import { Suspense, useState, useEffect, useRef } from "react"; // 导入 useState, useEffect, useRef
 import { useRouter } from 'next/navigation';
 import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { Carousel, CarouselContent, CarouselItem, CarouselPrevious, CarouselNext } from "@/components/ui/carousel";
+import Autoplay from "embla-carousel-autoplay";
+import { motion } from "framer-motion"; // 导入framer-motion
 
 // 移除静态 liveStreams 数据
 
@@ -33,6 +36,56 @@ const categoryStreams = {
     { id: 'val3', title: '和水友一起玩', streamer: '互动主播L', category: 'Valorant', viewers: 1100, thumbnailUrl: 'https://picsum.photos/seed/val3/440/248' },
     { id: 'val4', title: '爆头集锦', streamer: '狙神M', category: 'Valorant', viewers: 2800, thumbnailUrl: 'https://picsum.photos/seed/val4/440/248' },
   ],
+};
+
+// 淡入动画变体
+const fadeIn = {
+  hidden: { opacity: 0, y: 20 },
+  visible: { 
+    opacity: 1, 
+    y: 0,
+    transition: { duration: 0.6 }
+  }
+};
+
+// 交错动画容器变体
+const staggerContainer = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1
+    }
+  }
+};
+
+// 卡片悬停动画变体
+const cardHover = {
+  rest: { scale: 1, boxShadow: "0px 0px 0px rgba(0,0,0,0.1)" },
+  hover: { 
+    scale: 1.05,
+    // Add glow effect to existing shadow
+    boxShadow: "0px 10px 20px rgba(0,0,0,0.2), 0 0 15px rgba(147, 51, 234, 0.3)",
+    transition: {
+      type: "spring",
+      stiffness: 300,
+      damping: 20
+    }
+  }
+};
+
+
+// Image hover animation variant
+const imageHover = {
+  rest: { y: 0 },
+  hover: {
+    y: -5,
+    transition: {
+      type: "spring",
+      stiffness: 300,
+      damping: 20
+    }
+  }
 };
 
 export default function Home() {
@@ -79,59 +132,254 @@ export default function Home() {
     router.push('/dashboard');
   };
 
-  return (
-    <div className="p-6 md:p-12 space-y-12">
+  const plugin = useRef(
+    Autoplay({ delay: 5000, stopOnInteraction: true })
+  );
 
-      {/* 新增开始直播按钮 */}
-      <div className="mb-6 text-right">
-        <Button onClick={handleStartStreaming}>
-          开始直播
-        </Button>
-      </div>
+  // Mock 图片数据
+  const carouselImages = [
+    'https://static-cdn.jtvnw.net/previews-ttv/live_user_valorant_pacific-440x248.jpg',
+    'https://static-cdn.jtvnw.net/previews-ttv/live_user_mobilmobil-440x248.jpg',
+    'https://static-cdn.jtvnw.net/previews-ttv/live_user_zondalol-320x180.jpg',
+    'https://static-cdn.jtvnw.net/previews-ttv/live_user_uzra-320x180.jpg',
+    'https://static-cdn.jtvnw.net/previews-ttv/live_user_qttsix-320x180.jpg',
+  ];
+
+  return (
+    <motion.div 
+      className="p-6 md:p-12 space-y-12 bg-gradient-to-b from-background/95 to-background"
+      initial="hidden"
+      animate="visible"
+      variants={staggerContainer} // Apply staggerContainer to the main wrapper
+    >
+      {/* --- 顶部英雄区域 --- */}
+      <motion.section
+        className="relative rounded-2xl overflow-hidden bg-gradient-to-r from-purple-900/30 to-indigo-900/30 backdrop-blur-sm shadow-xl mx-auto max-w-7xl"
+        variants={fadeIn} // This section will now stagger in
+      >
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+          {/* 左侧轮播图 */}
+          <motion.div 
+            className="p-8"
+            initial={{ opacity: 0, x: -50 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.6 }}
+          >
+            <Carousel
+              plugins={[plugin.current]}
+              opts={{
+                align: "start",
+                loop: true,
+              }}
+              className="w-full"
+              onMouseEnter={plugin.current.stop}
+              onMouseLeave={plugin.current.reset}
+            >
+              <CarouselContent>
+                {carouselImages.map((src, index) => (
+                  <CarouselItem key={index}>
+                    <motion.div 
+                      className="relative aspect-video overflow-hidden rounded-xl" 
+                      whileHover={{ scale: 1.02 }}
+                      transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                    > 
+                      <Image
+                        src={src}
+                        alt={`轮播图 ${index + 1}`}
+                        fill
+                        className="object-cover"
+                        priority={index === 0} 
+                        sizes="(max-width: 768px) 100vw, 100vw" 
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent"></div>
+                      <div className="absolute bottom-4 left-4 text-white">
+                        <h3 className="font-bold text-xl">热门直播 {index + 1}</h3>
+                        <p className="text-sm opacity-90">立即观看</p>
+                      </div>
+                    </motion.div>
+                  </CarouselItem>
+                ))}
+              </CarouselContent>
+              <CarouselPrevious className="absolute left-4 top-1/2 -translate-y-1/2 z-10" /> 
+              <CarouselNext className="absolute right-4 top-1/2 -translate-y-1/2 z-10" /> 
+            </Carousel>
+          </motion.div>
+          
+          {/* 右侧欢迎信息 */}
+          <motion.div 
+            className="flex flex-col justify-center p-8"
+            initial={{ opacity: 0, x: 50 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+          >
+            <h1 className="text-4xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-pink-600">探索直播世界</h1>
+            <p className="text-lg mb-6 text-muted-foreground">发现精彩内容，与创作者互动，或开始您自己的直播之旅</p>
+            <motion.div
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              <Button 
+                onClick={handleStartStreaming} 
+                className="text-lg px-8 py-6 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 shadow-lg rounded-xl"
+                size="lg"
+              >
+                开始直播
+                <svg className="ml-2 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+              </Button>
+            </motion.div>
+          </motion.div>
+        </div>
+      </motion.section>
 
       {/* 正在直播 */}
-      <section>
-        <h2 className="text-2xl font-bold mb-4">正在直播</h2>
-        {isLoading && <p>加载中...</p>}
-        {error && <p className="text-red-500">错误: {error}</p>}
-        {!isLoading && !error && liveStreamsData.length === 0 && <p>当前没有直播。</p>}
-        {!isLoading && !error && liveStreamsData.length > 0 && (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-            {liveStreamsData.map((stream) => (
-              <StreamCard key={stream.id} stream={stream} />
-            ))}
+      <motion.section
+        variants={fadeIn} // This section will now stagger in
+        className="bg-card/40 backdrop-blur-sm rounded-xl p-6 shadow-sm"
+      >
+        <div className="flex justify-between items-center mb-6">
+          <h2 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-red-500 to-orange-500">
+            <span className="inline-block mr-2">
+              <svg className="w-6 h-6 text-red-500 inline" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                <path d="M2 6a2 2 0 012-2h6a2 2 0 012 2v8a2 2 0 01-2 2H4a2 2 0 01-2-2V6zM14.553 7.106A1 1 0 0014 8v4a1 1 0 00.553.894l2 1A1 1 0 0018 13V7a1 1 0 00-1.447-.894l-2 1z" />
+              </svg>
+            </span>
+            正在直播
+          </h2>
+          <Link href="/directory" className="text-sm text-primary hover:underline flex items-center">
+            查看全部
+            <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+            </svg>
+          </Link>
+        </div>
+        {isLoading && (
+          <div className="flex justify-center items-center h-32">
+            <motion.div
+              className="w-12 h-12 rounded-full border-4 border-primary border-t-transparent"
+              animate={{ rotate: 360 }}
+              transition={{ repeat: Infinity, duration: 1, ease: "linear" }}
+            />
           </div>
         )}
-      </section>
+        {error && (
+          <motion.div 
+            className="p-4 bg-red-500/10 border border-red-500/30 rounded-lg text-red-500"
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+          >
+            <p>错误: {error}</p>
+          </motion.div>
+        )}
+        {!isLoading && !error && liveStreamsData.length === 0 && (
+          <motion.div 
+            className="text-center py-12 px-4 bg-muted/30 rounded-xl"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+          >
+            <svg className="w-16 h-16 mx-auto text-muted-foreground/50 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
+            </svg>
+            <p className="text-lg font-medium">当前没有直播</p>
+            <p className="text-muted-foreground">稍后再来看看，或者您也可以开始直播</p>
+          </motion.div>
+        )}
+        {!isLoading && !error && liveStreamsData.length > 0 && (
+          <motion.div 
+            variants={staggerContainer}
+            initial="hidden"
+            animate="visible"
+            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
+          >
+            {liveStreamsData.map((stream) => (
+              <motion.div key={stream.id} variants={fadeIn}>
+                <StreamCard stream={stream} />
+              </motion.div>
+            ))}
+          </motion.div>
+        )}
+      </motion.section>
 
       {/* 喜欢的类别 */}
-      <section>
-        <h2 className="text-2xl font-bold mb-4">我们认为您会喜欢的类别</h2>
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
-          {preferredCategories.map((category) => (
-            <CategoryCard key={category.id} category={category} />
-          ))}
+      <motion.section
+        variants={fadeIn} // This section will now stagger in
+        className="bg-card/40 backdrop-blur-sm rounded-xl p-6 shadow-sm"
+      >
+        <div className="flex justify-between items-center mb-6">
+          <h2 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-500 to-teal-500">
+            <span className="inline-block mr-2">
+              <svg className="w-6 h-6 text-blue-500 inline" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                <path fillRule="evenodd" d="M12.395 2.553a1 1 0 00-1.45-.385c-.345.23-.614.558-.822.88-.214.33-.403.713-.57 1.116-.334.804-.614 1.768-.84 2.734a31.365 31.365 0 00-.613 3.58 2.64 2.64 0 01-.945-1.067c-.328-.68-.398-1.534-.398-2.654A1 1 0 005.05 6.05 6.981 6.981 0 003 11a7 7 0 1011.95-4.95c-.592-.591-.98-.985-1.348-1.467-.363-.476-.724-1.063-1.207-2.03zM12.12 15.12A3 3 0 017 13s.879.5 2.5.5c0-1 .5-4 1.25-4.5.5 1 .786 1.293 1.371 1.879A2.99 2.99 0 0113 13a2.99 2.99 0 01-.879 2.121z" clipRule="evenodd" />
+              </svg>
+            </span>
+            我们认为您会喜欢的类别
+          </h2>
+          <Link href="/categories" className="text-sm text-primary hover:underline flex items-center">
+            全部类别
+            <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+            </svg>
+          </Link>
         </div>
-      </section>
+        <motion.div 
+          variants={staggerContainer}
+          initial="hidden"
+          animate="visible"
+          className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-8 lg:grid-cols-10 gap-6"
+        >
+          {preferredCategories.map((category) => (
+            <motion.div key={category.id} variants={fadeIn}>
+              <CategoryCard category={category} />
+            </motion.div>
+          ))}
+        </motion.div>
+      </motion.section>
 
       {/* 各类别直播列表 */}
-      {preferredCategories.map((category) => (
-        <section key={category.id}>
-          <div className="flex justify-between items-center mb-4">
-            <h2 className="text-2xl font-bold">{category.name} 直播</h2>
-            <Link href={`/directory/category/${category.id}`} className="text-sm text-primary hover:underline">
+      {preferredCategories.map((category, index) => (
+        <motion.section 
+          key={category.id}
+          variants={fadeIn}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-100px" }}
+          transition={{ delay: index * 0.1 }}
+          className="bg-card/40 backdrop-blur-sm rounded-xl p-6 shadow-sm"
+        >
+          <div className="flex justify-between items-center mb-6">
+            <h2 className="text-2xl font-bold">
+              <span className="inline-block w-3 h-3 rounded-full mr-2" style={{ 
+                backgroundColor: category.id === 'lol' ? '#4A7DFF' : 
+                  category.id === 'chatting' ? '#9146FF' : '#FF5555' 
+              }}></span>
+              {category.name} 直播
+            </h2>
+            <Link href={`/directory/category/${category.id}`} className="text-sm text-primary hover:underline flex items-center">
               查看更多
+              <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              </svg>
             </Link>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+          <motion.div 
+            variants={staggerContainer}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-50px" }}
+            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6"
+          >
             {(categoryStreams[category.id as keyof typeof categoryStreams] || []).map((stream) => (
-              <StreamCard key={stream.id} stream={stream} />
+              <motion.div key={stream.id} variants={fadeIn}>
+                <StreamCard stream={stream} />
+              </motion.div>
             ))}
-          </div>
-        </section>
+          </motion.div>
+        </motion.section>
       ))}
 
-    </div>
+    </motion.div>
   );
 }
 
@@ -155,37 +403,56 @@ interface StreamCardProps {
 }
 
 function StreamCard({ stream }: StreamCardProps) {
-  // 修改 Link 的 href 指向观众观看页面
+  // 使用motion组件添加动画效果
   return (
-    <Link href={`/dashboard?roomName=${encodeURIComponent(stream.name || stream.id)}&role=viewer`} className="group block space-y-2">
-      <div className="relative aspect-video rounded-lg overflow-hidden transition-transform duration-200 ease-in-out group-hover:scale-105">
-        <Image
-          src={stream.thumbnailUrl}
-          alt={`${stream.title || stream.name} 直播缩略图`}
-          fill
-          className="object-cover"
-          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, (max-width: 1280px) 33vw, 25vw"
-        />
-        <div className="absolute top-2 left-2 bg-red-600 text-white text-xs font-semibold px-2 py-0.5 rounded">
-          直播
+    <motion.div
+      whileHover="hover"
+      initial="rest"
+      animate="rest"
+      variants={cardHover}
+    >
+      <Link href={`/dashboard?roomName=${encodeURIComponent(stream.name || stream.id)}&role=viewer`} className="group block h-full bg-card rounded-xl overflow-hidden shadow-sm transition-all hover:shadow-lg">
+        <div className="space-y-3">
+          {/* Wrap Image with motion.div for hover effect */}
+          <motion.div
+            className="relative aspect-video overflow-hidden"
+            variants={imageHover} // Apply image hover variant
+          >
+            <Image
+              src={stream.thumbnailUrl}
+              alt={`${stream.title || stream.name} 直播缩略图`}
+              fill
+              className="object-cover" // Remove group-hover:scale-105 as motion handles scale
+              sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, (max-width: 1280px) 33vw, 25vw"
+            />
+            {/* Keep overlays inside the motion div */}
+            <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+            <div className="absolute top-2 left-2 bg-red-600 text-white text-xs font-semibold px-2 py-0.5 rounded-md flex items-center">
+              <span className="w-2 h-2 rounded-full bg-white mr-1 animate-pulse"></span>
+              直播
+            </div>
+            <div className="absolute bottom-2 left-2 bg-black/70 backdrop-blur-sm text-white text-xs px-2 py-1 rounded-md">
+              {stream.viewers.toLocaleString()} 名观众
+            </div>
+          </motion.div>
+          {/* Reduce padding and avatar size */}
+          <div className="flex items-start space-x-3 p-2">
+            <div className="w-8 h-8 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex-shrink-0 overflow-hidden relative"> {/* Removed mt-1 */}
+              {/* 占位符头像或添加主播头像 */}
+              <div className="absolute inset-0.5 bg-card rounded-full"></div>
+            </div>
+            <div className="flex-1 min-w-0">
+              <h3 className="text-sm font-semibold truncate text-foreground group-hover:text-primary">{stream.title || stream.name}</h3>
+              <p className="text-xs text-muted-foreground truncate">{stream.streamer}</p>
+              <p className="text-xs text-muted-foreground truncate flex items-center mt-1">
+                <span className="inline-block w-2 h-2 rounded-full bg-emerald-500 mr-1"></span>
+                {stream.category}
+              </p>
+            </div>
+          </div>
         </div>
-        <div className="absolute bottom-2 left-2 bg-black/60 text-white text-xs px-1.5 py-0.5 rounded">
-          {/* 使用 participantCount */}
-          {stream.viewers.toLocaleString()} 名观众
-        </div>
-      </div>
-      <div className="flex items-start space-x-3">
-        {/* 占位符头像 */}
-        <div className="w-9 h-9 rounded-full bg-muted flex-shrink-0 mt-1"></div>
-        <div className="flex-1 min-w-0">
-          {/* 使用 name 或 title */}
-          <h3 className="text-sm font-semibold truncate text-foreground group-hover:text-primary">{stream.title || stream.name}</h3>
-          {/* 使用占位符 */}
-          <p className="text-xs text-muted-foreground truncate">{stream.streamer}</p>
-          <p className="text-xs text-muted-foreground truncate">{stream.category}</p>
-        </div>
-      </div>
-    </Link>
+      </Link>
+    </motion.div>
   );
 }
 
@@ -204,27 +471,43 @@ interface CategoryCardProps {
 
 function CategoryCard({ category }: CategoryCardProps) {
     return (
-        <Link href={`/directory/category/${category.id}`} className="group block space-y-2">
-            <div className="aspect-[3/4] rounded overflow-hidden transition-transform duration-200 ease-in-out group-hover:scale-105">
+      <motion.div
+        whileHover="hover"
+        initial="rest"
+        animate="rest"
+        variants={cardHover}
+      >
+        <Link href={`/directory/category/${category.id}`} className="group block h-full bg-card rounded-xl overflow-hidden shadow-sm transition-all hover:shadow-lg">
+            {/* Wrap Image with motion.div for hover effect */}
+            <motion.div
+              className="aspect-[3/4] rounded-t-xl overflow-hidden relative"
+              variants={imageHover} // Apply image hover variant
+            >
                 <Image
                     src={category.coverUrl}
                     alt={`${category.name} 封面`}
-                    width={188}
-                    height={250}
-                    className="object-cover w-full h-full"
+                    width={150}
+                    height={200}
+                    className="object-cover w-full h-full" // Remove group-hover:scale-110 as motion handles scale
                 />
-            </div>
-            <div>
-                <h3 className="text-sm font-semibold truncate text-foreground group-hover:text-primary">{category.name}</h3>
-                <p className="text-xs text-muted-foreground">{category.viewers} 名观众</p>
-                <div className="mt-1 flex flex-wrap gap-1">
+                {/* Keep overlays inside the motion div */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                <div className="absolute bottom-2 left-2 bg-black/70 backdrop-blur-sm text-white text-xs px-2 py-1 rounded-md">
+                    {category.viewers} 名观众
+                </div>
+            </motion.div>
+            {/* Reduce padding */}
+            <div className="p-2">
+                <h3 className="text-sm font-semibold truncate text-foreground group-hover:text-primary transition-colors">{category.name}</h3>
+                <div className="mt-2 flex flex-wrap gap-1">
                     {category.tags.map(tag => (
-                        <span key={tag} className="text-xs bg-muted text-muted-foreground px-1.5 py-0.5 rounded-full">
+                        <span key={tag} className="text-xs bg-muted/70 text-muted-foreground px-1.5 py-0.5 rounded-full">
                             {tag}
                         </span>
                     ))}
                 </div>
             </div>
         </Link>
+      </motion.div>
     );
 }
