@@ -8,6 +8,7 @@ import { Category, Stream } from "@/types";
 import { Skeleton } from "@/components/ui/skeleton";
 import { SidebarContext } from "@/contexts/sidebar-context";
 import { X } from "lucide-react";
+import { motion } from "framer-motion";
 
 interface SidebarProps {
   className?: string;
@@ -131,98 +132,10 @@ export function Sidebar({ className }: SidebarProps) {
     isOpen ? "translate-x-0" : "-translate-x-full"
   );
 
-  // 移动端侧边栏
-  const mobileSidebar = (
-    <aside className={mobileSidebarClasses}>
-      <div className="flex justify-between items-center p-4 border-b border-[#2a2a2d]">
-        <h2 className="text-xl font-bold">TwitchClone</h2>
-        <button onClick={closeSidebar} className="p-1 rounded-md hover:bg-[#18181b]">
-          <X className="h-5 w-5" />
-        </button>
-      </div>
-      <div className="overflow-y-auto h-[calc(100%-60px)]">
-        <div className="p-3">
-          <h2 className="mb-2 px-4 text-lg font-semibold tracking-tight">
-            推荐频道
-          </h2>
-          <div className="space-y-1">
-            {isLoadingChannels ? (
-              // 加载状态骨架屏
-              Array(3).fill(0).map((_, i) => (
-                <div key={i} className="px-3 py-2 flex items-center space-x-3">
-                  <Skeleton className="h-8 w-8 rounded-full" />
-                  <div className="space-y-1 flex-1">
-                    <Skeleton className="h-4 w-full" />
-                    <Skeleton className="h-3 w-1/2" />
-                  </div>
-                </div>
-              ))
-            ) : (
-              // 实际内容
-              displayedChannels.map((stream) => {
-                const user = typeof stream.user === 'string' 
-                  ? { _id: stream.user, username: "Unknown", avatar: "", email: "", isStreamer: true, createdAt: "" }
-                  : stream.user;
-                  
-                return (
-                  <SidebarItem 
-                    key={stream._id}
-                    label={user.username}
-                    href={`/channel/${user._id}`}
-                    avatar={user.avatar || "/images/avatars/avatar-1.png"}
-                    viewerCount={stream.viewerCount}
-                    isLive={stream.isLive}
-                    onClick={closeSidebar}
-                  />
-                );
-              })
-            )}
-          </div>
-        </div>
-        <div className="p-3 pt-0">
-          <h2 className="mb-2 px-4 text-lg font-semibold tracking-tight">
-            热门分类
-          </h2>
-          <div className="space-y-1">
-            {isLoadingCategories ? (
-              // 加载状态骨架屏
-              Array(3).fill(0).map((_, i) => (
-                <div key={i} className="px-3 py-2 flex items-center space-x-3">
-                  <Skeleton className="h-8 w-8 rounded" />
-                  <div className="space-y-1 flex-1">
-                    <Skeleton className="h-4 w-3/4" />
-                    <Skeleton className="h-3 w-1/2" />
-                  </div>
-                </div>
-              ))
-            ) : (
-              // 实际内容
-              displayedCategories.map((category) => (
-                <SidebarItem 
-                  key={category._id}
-                  label={category.name}
-                  href={`/category/${category.slug}`}
-                  viewerCount={category.viewerCount}
-                  icon={getCategoryEmoji(category.slug)}
-                  onClick={closeSidebar}
-                />
-              ))
-            )}
-          </div>
-        </div>
-        <div className="mt-auto p-4 border-t border-[#2a2a2d]">
-          <button className="w-full py-2 rounded-md bg-[#a970ff] text-white hover:bg-[#9461e5] transition-colors">
-            开始直播
-          </button>
-        </div>
-      </div>
-    </aside>
-  );
 
   // 桌面侧边栏类名
   const desktopSidebarClasses = cn(
-    "fixed left-0 flex h-full w-60 flex-col bg-[#0e0e10] border-r border-[#2a2a2d] z-40 transition-transform duration-300",
-    isOpen ? "translate-x-0" : "-translate-x-full",
+    "flex h-full w-60 flex-col bg-[#0e0e10] border-r border-[#2a2a2d]",
     className
   );
 
@@ -236,7 +149,12 @@ export function Sidebar({ className }: SidebarProps) {
 
   // 桌面侧边栏
   const desktopSidebar = (
-    <aside className={desktopSidebarClasses}>
+      <motion.aside
+        initial={{ x: -200 }}
+        animate={{ x: 0 }}
+        transition={{ type: "spring", stiffness: 250, damping: 30 }}
+        className={desktopSidebarClasses}
+      >
       <div className="p-3">
         <h2 className="mb-2 px-4 text-lg font-semibold tracking-tight">
           推荐频道
@@ -309,13 +227,12 @@ export function Sidebar({ className }: SidebarProps) {
           开始直播
         </button>
       </div>
-    </aside>
+    </motion.aside>
   );
 
   return (
     <>
       {maskLayer}
-      {mobileSidebar}
       {desktopSidebar}
     </>
   );
