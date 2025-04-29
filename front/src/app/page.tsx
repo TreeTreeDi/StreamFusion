@@ -65,35 +65,6 @@ const staggerContainer = {
   }
 };
 
-// 卡片悬停动画变体
-const cardHover = {
-  rest: { scale: 1, boxShadow: "0px 0px 0px rgba(0,0,0,0.1)" },
-  hover: { 
-    scale: 1.05,
-    // Add glow effect to existing shadow
-    boxShadow: "0px 10px 20px rgba(0,0,0,0.2), 0 0 15px rgba(147, 51, 234, 0.3)",
-    transition: {
-      type: "spring",
-      stiffness: 300,
-      damping: 20
-    }
-  }
-};
-
-
-// Image hover animation variant
-const imageHover = {
-  rest: { y: 0 },
-  hover: {
-    y: -5,
-    transition: {
-      type: "spring",
-      stiffness: 300,
-      damping: 20
-    }
-  }
-};
-
 export default function Home() {
   const router = useRouter();
   const [liveStreamsData, setLiveStreamsData] = useState<Stream[]>([]); // 添加 state
@@ -135,7 +106,7 @@ export default function Home() {
   }, []); // 空依赖数组，仅在挂载时运行
 
   const handleStartStreaming = () => {
-    router.push('/dashboard');
+    router.push('/start-stream');
   };
 
   const plugin = useRef(

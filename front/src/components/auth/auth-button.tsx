@@ -107,27 +107,14 @@ export function AuthButton() {
 
   // 未登录状态
   return (
-    <>
+    <Link href="/login">
       <Button 
-        onClick={openLoginModal} 
         variant="secondary"
         className="flex items-center gap-x-2 bg-[#2a2a2d] hover:bg-[#3a3a3d] text-[#efeff1] transition-colors"
       >
         <User className="h-5 w-5" />
         <span className="hidden md:block">登录</span>
       </Button>
-
-      <LoginModal 
-        isOpen={showLoginModal} 
-        onClose={closeLoginModal} 
-        onRegister={openRegisterModal} 
-      />
-
-      <RegisterModal
-        isOpen={showRegisterModal}
-        onClose={closeRegisterModal}
-        onLogin={openLoginFromRegister}
-      />
-    </>
+    </Link>
   );
 } 
