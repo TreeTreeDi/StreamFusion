@@ -7,7 +7,6 @@ import { fetchPopularCategories, fetchRecommendedChannels } from "@/lib/api-serv
 import { Category, Stream } from "@/types";
 import { Skeleton } from "@/components/ui/skeleton";
 import { SidebarContext } from "@/contexts/sidebar-context";
-import { X } from "lucide-react";
 import { motion } from "framer-motion";
 
 interface SidebarProps {

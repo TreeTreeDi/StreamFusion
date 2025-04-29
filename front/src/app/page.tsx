@@ -9,7 +9,13 @@ import { Carousel, CarouselContent, CarouselItem, CarouselPrevious, CarouselNext
 import Autoplay from "embla-carousel-autoplay";
 import { motion } from "framer-motion"; // 导入framer-motion
 
+
 // 移除静态 liveStreams 数据
+
+// 抽离子组件
+import { CategoryCard, Category } from "@/components/home/CategoryCard";
+import { StreamCardV2 as StreamCard, HomeStream as Stream } from "@/components/streams/StreamCard";
+
 
 const preferredCategories = [
   { id: 'lol', name: '英雄联盟', viewers: '5万', coverUrl: 'https://static-cdn.jtvnw.net/ttv-boxart/21779-188x250.jpg', tags: ['角色扮演', '策略'] },
@@ -383,131 +389,6 @@ export default function Home() {
   );
 }
 
-// --- 子组件 ---
-
-// 更新 Stream 接口以匹配 API 返回并包含 StreamCard 需要的字段
-interface Stream {
-  id: string; // 来自 room.sid
-  name?: string; // 来自 room.name
-  participantCount?: number; // 来自 room.numParticipants
-  // 以下为 StreamCard 需要的补充字段
-  title: string;
-  streamer: string;
-  category: string;
-  viewers: number;
-  thumbnailUrl: string;
-}
-
-interface StreamCardProps {
-  stream: Stream;
-}
-
-function StreamCard({ stream }: StreamCardProps) {
-  // 使用motion组件添加动画效果
-  return (
-    <motion.div
-      whileHover="hover"
-      initial="rest"
-      animate="rest"
-      variants={cardHover}
-    >
-      <Link href={`/dashboard?roomName=${encodeURIComponent(stream.name || stream.id)}&role=viewer`} className="group block h-full bg-card rounded-xl overflow-hidden shadow-sm transition-all hover:shadow-lg">
-        <div className="space-y-3">
-          {/* Wrap Image with motion.div for hover effect */}
-          <motion.div
-            className="relative aspect-video overflow-hidden"
-            variants={imageHover} // Apply image hover variant
-          >
-            <Image
-              src={stream.thumbnailUrl}
-              alt={`${stream.title || stream.name} 直播缩略图`}
-              fill
-              className="object-cover" // Remove group-hover:scale-105 as motion handles scale
-              sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, (max-width: 1280px) 33vw, 25vw"
-            />
-            {/* Keep overlays inside the motion div */}
-            <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-            <div className="absolute top-2 left-2 bg-red-600 text-white text-xs font-semibold px-2 py-0.5 rounded-md flex items-center">
-              <span className="w-2 h-2 rounded-full bg-white mr-1 animate-pulse"></span>
-              直播
-            </div>
-            <div className="absolute bottom-2 left-2 bg-black/70 backdrop-blur-sm text-white text-xs px-2 py-1 rounded-md">
-              {stream.viewers.toLocaleString()} 名观众
-            </div>
-          </motion.div>
-          {/* Reduce padding and avatar size */}
-          <div className="flex items-start space-x-3 p-2">
-            <div className="w-8 h-8 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex-shrink-0 overflow-hidden relative"> {/* Removed mt-1 */}
-              {/* 占位符头像或添加主播头像 */}
-              <div className="absolute inset-0.5 bg-card rounded-full"></div>
-            </div>
-            <div className="flex-1 min-w-0">
-              <h3 className="text-sm font-semibold truncate text-foreground group-hover:text-primary">{stream.title || stream.name}</h3>
-              <p className="text-xs text-muted-foreground truncate">{stream.streamer}</p>
-              <p className="text-xs text-muted-foreground truncate flex items-center mt-1">
-                <span className="inline-block w-2 h-2 rounded-full bg-emerald-500 mr-1"></span>
-                {stream.category}
-              </p>
-            </div>
-          </div>
-        </div>
-      </Link>
-    </motion.div>
-  );
-}
 
 
-interface Category {
-    id: string;
-    name: string;
-    viewers: string;
-    coverUrl: string;
-    tags: string[];
-}
 
-interface CategoryCardProps {
-    category: Category;
-}
-
-function CategoryCard({ category }: CategoryCardProps) {
-    return (
-      <motion.div
-        whileHover="hover"
-        initial="rest"
-        animate="rest"
-        variants={cardHover}
-      >
-        <Link href={`/directory/category/${category.id}`} className="group block h-full bg-card rounded-xl overflow-hidden shadow-sm transition-all hover:shadow-lg">
-            {/* Wrap Image with motion.div for hover effect */}
-            <motion.div
-              className="aspect-[3/4] rounded-t-xl overflow-hidden relative"
-              variants={imageHover} // Apply image hover variant
-            >
-                <Image
-                    src={category.coverUrl}
-                    alt={`${category.name} 封面`}
-                    width={150}
-                    height={200}
-                    className="object-cover w-full h-full" // Remove group-hover:scale-110 as motion handles scale
-                />
-                {/* Keep overlays inside the motion div */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                <div className="absolute bottom-2 left-2 bg-black/70 backdrop-blur-sm text-white text-xs px-2 py-1 rounded-md">
-                    {category.viewers} 名观众
-                </div>
-            </motion.div>
-            {/* Reduce padding */}
-            <div className="p-2">
-                <h3 className="text-sm font-semibold truncate text-foreground group-hover:text-primary transition-colors">{category.name}</h3>
-                <div className="mt-2 flex flex-wrap gap-1">
-                    {category.tags.map(tag => (
-                        <span key={tag} className="text-xs bg-muted/70 text-muted-foreground px-1.5 py-0.5 rounded-full">
-                            {tag}
-                        </span>
-                    ))}
-                </div>
-            </div>
-        </Link>
-      </motion.div>
-    );
-}
