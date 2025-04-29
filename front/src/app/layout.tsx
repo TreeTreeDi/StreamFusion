@@ -1,11 +1,8 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
-import { Navbar } from "@/components/navbar/navbar";
-import { Sidebar } from "@/components/sidebar/sidebar";
 import { AuthProvider } from "@/contexts/auth-context";
-import { SidebarProvider } from "@/contexts/sidebar-context";
-import { Toaster } from "sonner";
+import { Toaster } from "sonner"; // Keep Toaster here for global notifications if needed across all pages
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -23,20 +20,10 @@ export default function RootLayout({
     <html lang="zh-CN">
       <body className={inter.className}>
         <AuthProvider>
-          <SidebarProvider>
-            <Navbar />
-            <div className="flex h-full pt-14">
-              <Sidebar className="hidden md:flex w-60 h-full" />
-              <main className="flex-1 h-full">
-                <div className="h-full">
-                  {children}
-                </div>
-              </main>
-            </div>
-            <Toaster position="top-center" closeButton richColors />
-          </SidebarProvider>
+          {children}
+          <Toaster position="top-center" closeButton richColors /> {/* Keep Toaster accessible globally */}
         </AuthProvider>
       </body>
     </html>
   );
-} 
+}
