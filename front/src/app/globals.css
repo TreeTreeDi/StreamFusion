@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
 @import "tailwindcss";
 
 
@@ -111,3 +112,67 @@
     @apply bg-[#a970ff] text-white;
   }
 } 
+
+@layer utilities {
+  .animation-delay-2000 {
+    animation-delay: 2s;
+  }
+  .animation-delay-4000 {
+    animation-delay: 4s;
+  }
+}
+
+@keyframes aurora-pulse {
+  0%, 100% {
+    opacity: 0.3;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.6;
+    transform: scale(1.05);
+  }
+}
+
+.aurora-bg > div {
+  animation: aurora-pulse 6s infinite ease-in-out;
+  /* Ensure these elements are behind the main content but visible */
+  z-index: -1; 
+}
+
+/* Optional: Add a subtle movement animation */
+@keyframes aurora-drift {
+  0% { transform: translate(0, 0) scale(1); }
+  25% { transform: translate(5px, 10px) scale(1.02); }
+  50% { transform: translate(-5px, -5px) scale(0.98); }
+  75% { transform: translate(10px, -8px) scale(1.01); }
+  100% { transform: translate(0, 0) scale(1); }
+}
+
+/* Apply drift animation to specific elements if desired */
+/* .aurora-bg > div:nth-child(1) { animation: aurora-drift 20s infinite linear alternate; } */
+/* .aurora-bg > div:nth-child(2) { animation: aurora-drift 25s infinite linear alternate-reverse; } */
+/* .aurora-bg > div:nth-child(3) { animation: aurora-drift 18s infinite linear alternate; } */
+
+/* Add fade-in-up animation definition */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 40px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+.fade-in-up {
+  animation-name: fadeInUp;
+  animation-duration: 0.8s; /* Adjust duration as needed */
+  animation-fill-mode: both;
+  visibility: hidden; /* Initially hidden, JS will make it visible */
+}
+
+/* Class to add via JS when element is in view */
+.is-visible {
+  visibility: visible;
+}
