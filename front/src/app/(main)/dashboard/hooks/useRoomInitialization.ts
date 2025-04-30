@@ -2,18 +2,22 @@
 
 import { useState, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
+import { useAuth } from '@/contexts/auth-context';
 
-// Placeholder function for getting logged-in user (Consider moving to a shared util)
-const getCurrentLoggedInUsername = (): string | null => {
-  // Replace this with your actual logic to get the username
-  // e.g., from context, local storage, or an API call
-  console.warn("Using placeholder for getCurrentLoggedInUsername in useRoomInitialization");
-  // Example: return localStorage.getItem('username');
-  return "TestUser"; // Placeholder value for now
+/**
+ * 必须在组件或自定义hook顶层调用
+ * 推荐：只在useRoomInitialization内部调用
+ */
+const getCurrentLoggedInUsername = (user: { username?: string } | null): string | null => {
+  if (user && user.username) {
+    return user.username;
+  }
+  return null;
 };
 
 export function useRoomInitialization() {
   const searchParams = useSearchParams();
+  const { user } = useAuth();
   const [initialRoomName, setInitialRoomName] = useState<string>('');
   const [initialRole, setInitialRole] = useState<'host' | 'viewer'>('viewer');
   const [isAutoJoining, setIsAutoJoining] = useState<boolean>(false);
@@ -23,9 +27,9 @@ export function useRoomInitialization() {
     const roomNameParam = searchParams.get('roomName');
     const roleParam = searchParams.get('role');
 
-    // Set username from logged-in status or placeholder
-    const loggedInUsername = getCurrentLoggedInUsername();
-    setDerivedUsername(loggedInUsername || 'Viewer'); // Use 'Viewer' if not logged in
+    // 使用安全的 getCurrentLoggedInUsername
+    const loggedInUsername = getCurrentLoggedInUsername(user);
+    setDerivedUsername(loggedInUsername || 'Viewer'); // 未登录用 'Viewer'
 
     if (roleParam === 'viewer' && roomNameParam) {
       console.log('Viewer detected via URL params, attempting auto-join...');
@@ -41,7 +45,7 @@ export function useRoomInitialization() {
         }
     }
     // If not auto-joining viewer, user might need to input room name (if host)
-  }, [searchParams]); // Re-run if searchParams change
+  }, [searchParams, user]); // user 变化时也更新
 
   return { initialRoomName, initialRole, isAutoJoining, derivedUsername, setInitialRoomName, setInitialRole };
 }

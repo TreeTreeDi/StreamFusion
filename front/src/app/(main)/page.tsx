@@ -76,7 +76,7 @@ export default function Home() {
       setIsLoading(true);
       setError(null);
       try {
-        const response = await fetch('/api/livekit/rooms');
+      const response = await fetch('/api/livekit/rooms');
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }

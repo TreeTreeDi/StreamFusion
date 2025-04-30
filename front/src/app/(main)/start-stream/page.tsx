@@ -54,7 +54,7 @@ export default function StartStreamPage() {
       // Maybe auto-select the middle one or show a message
       console.warn("Please select a stream type.");
     }
-  };
+};
 
   const handleStartStreaming = () => {
     if (roomName.trim() === '') {
@@ -62,8 +62,7 @@ export default function StartStreamPage() {
       console.error("Room name cannot be empty.");
       return;
     }
-    // Navigate to dashboard with room name
-    router.push(`/dashboard?roomName=${encodeURIComponent(roomName.trim())}`);
+    router.push(`/dashboard?roomName=${encodeURIComponent(roomName.trim())}&role=host`);
   };
 
   return (
@@ -182,7 +181,6 @@ export default function StartStreamPage() {
           )}
         </div>
       </div>
-      {/* Removed old global style block */}
     </div>
   );
 }
