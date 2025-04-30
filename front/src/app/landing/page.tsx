@@ -150,7 +150,7 @@ const LandingPage: React.FC = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.3 }}
-            onClick={() => router.push('/register')} // Redirect to registration page
+            onClick={() => router.push('/login')} // Redirect to registration page
             className="bg-[#5751D5] hover:bg-purple-700 text-white font-bold py-3 px-8 rounded-lg text-lg transition duration-300 transform hover:scale-105"
           >
             立即体验 / Get Started
@@ -381,7 +381,7 @@ const LandingPage: React.FC = () => {
           <h3 
           className="text-lg text-gray-400 mb-8">Ready to start your streaming journey?</h3>
           <button 
-            onClick={() => router.push('/register')} // Redirect to registration page
+            onClick={() => router.push('/login')} // Redirect to registration page
 
           className="bg-[#5751D5] hover:bg-purple-700 text-white font-bold py-3 px-8 rounded-lg text-lg transition duration-300 transform hover:scale-105 mb-12">
             立即注册 / Sign Up Now

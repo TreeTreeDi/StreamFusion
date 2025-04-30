@@ -7,6 +7,8 @@ import { LoginModal } from "./login-modal";
 import { RegisterModal } from "./register-modal";
 import { useAuth } from "@/contexts/auth-context";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { useRouter } from "next/navigation";
+
 import { 
   DropdownMenu, 
   DropdownMenuContent, 
@@ -22,6 +24,7 @@ export function AuthButton() {
   const { user, isAuthenticated, logout } = useAuth();
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [showRegisterModal, setShowRegisterModal] = useState(false);
+  const router = useRouter();
 
   const openLoginModal = () => {
     setShowLoginModal(true);
@@ -48,6 +51,7 @@ export function AuthButton() {
   const handleLogout = () => {
     logout();
     toast.success("已成功登出");
+    router.push("/landing");
   };
 
   // 已登录状态
