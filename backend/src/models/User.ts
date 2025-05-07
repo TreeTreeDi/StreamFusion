@@ -2,6 +2,7 @@ import mongoose from 'mongoose';
 import bcrypt from 'bcryptjs';
 
 export interface IUser {
+  _id: mongoose.Types.ObjectId; // 添加 _id 字段
   username: string;
   email: string;
   password: string;

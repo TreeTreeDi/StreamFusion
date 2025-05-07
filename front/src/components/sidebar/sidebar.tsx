@@ -42,8 +42,8 @@ export function Sidebar({ className }: SidebarProps) {
       // 加载热门分类
       setIsLoadingCategories(true);
       try {
-        const categories = await fetchPopularCategories(3);
-        setPopularCategories(categories);
+        const categoriesResponse = await fetchPopularCategories(3);
+        setPopularCategories(categoriesResponse.items); // 提取 items 数组
       } catch (error) {
         console.error("Failed to load popular categories:", error);
       } finally {
@@ -257,15 +257,15 @@ interface SidebarItemProps {
   label: string;
   href: string;
   avatar?: string;
-  icon?: string;
+  icon?: React.ReactNode; // 修改类型为 React.ReactNode
   viewerCount?: number;
   isLive?: boolean;
   onClick?: () => void;
 }
 
-function SidebarItem({ label, href, avatar, icon, viewerCount, isLive, onClick }: SidebarItemProps) {
+export function SidebarItem({ label, href, avatar, icon, viewerCount, isLive, onClick }: SidebarItemProps) { // 添加 export
   return (
-    <Link 
+    <Link
       href={href}
       className="sidebar-item flex items-center gap-x-3 rounded-md px-3 py-2 text-sm font-medium hover:bg-[#18181b] transition-colors"
       onClick={onClick}

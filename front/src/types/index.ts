@@ -6,9 +6,11 @@ export interface User {
   avatar?: string;
   bio?: string;
   isStreamer: boolean;
+  isAdmin: boolean; // 添加 isAdmin 字段
   createdAt: string;
   followers?: string[];
   following?: string[];
+  password?: string; // 添加可选的 password 字段以匹配解构
 }
 
 export interface Category {

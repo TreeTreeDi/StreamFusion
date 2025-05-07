@@ -16,6 +16,7 @@ import streamRoutes from './routes/stream.routes';
 import tagRoutes from './routes/tag.routes';
 import srsRoutes from './routes/srs.routes';
 import livekitRoutes from './routes/livekit.routes';
+import adminUserRoutes from './routes/adminUser.routes'; // 导入管理员用户路由
 
 // 加载环境变量
 dotenv.config();
@@ -71,6 +72,7 @@ app.use(streamRoutes.routes()).use(streamRoutes.allowedMethods({ throw: true }))
 app.use(tagRoutes.routes()).use(tagRoutes.allowedMethods({ throw: true }));
 app.use(srsRoutes.routes()).use(srsRoutes.allowedMethods({ throw: true }));
 app.use(livekitRoutes.routes()).use(livekitRoutes.allowedMethods({ throw: true }));
+app.use(adminUserRoutes.routes()).use(adminUserRoutes.allowedMethods({ throw: true })); // 注册管理员用户路由
 
 // 使用路由
 app.use(router.routes()).use(router.allowedMethods({ throw: true }));
@@ -121,4 +123,4 @@ export { app, server, startServer };
 // 直接执行
 if (require.main === module) {
   startServer();
-} 
+}

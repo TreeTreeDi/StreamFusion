@@ -1,6 +1,6 @@
 import Router from 'koa-router';
 import * as bannerController from '../controllers/banner.controller';
-import { authenticate, isAdmin } from '../middleware/auth';
+import { authenticate, isAdminAuthenticated } from '../middleware/auth';
 
 const router = new Router({ prefix: '/api/banners' });
 
@@ -9,8 +9,8 @@ router.get('/', bannerController.getBanners);
 router.get('/:id', bannerController.getBanner);
 
 // 管理员路由 - 创建、更新、删除轮播图
-router.post('/', authenticate, isAdmin, bannerController.createBanner);
-router.put('/:id', authenticate, isAdmin, bannerController.updateBanner);
-router.delete('/:id', authenticate, isAdmin, bannerController.deleteBanner);
+router.post('/', authenticate, isAdminAuthenticated, bannerController.createBanner);
+router.put('/:id', authenticate, isAdminAuthenticated, bannerController.updateBanner);
+router.delete('/:id', authenticate, isAdminAuthenticated, bannerController.deleteBanner);
 
 export default router; 
