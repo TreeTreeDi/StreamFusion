@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useAuth } from '@/contexts/auth-context';
 import { SidebarItem } from '@/components/sidebar/sidebar'; // 导入导出的 SidebarItem
-import { HomeIcon, UsersIcon } from 'lucide-react'; // 示例图标
+import { HomeIcon, UsersIcon, RadioTower } from 'lucide-react'; // 示例图标, 添加 RadioTower
 
 interface AdminLayoutProps {
   children: ReactNode;
@@ -46,6 +46,11 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
             href="/admin/user-management"
             label="用户管理"
             icon={<UsersIcon className="h-5 w-5" />}
+          />
+          <SidebarItem
+            href="/admin/stream-management"
+            label="直播间管理"
+            icon={<RadioTower className="h-5 w-5" />}
           />
           <SidebarItem
             href="/"

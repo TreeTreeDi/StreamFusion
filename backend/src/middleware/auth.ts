@@ -10,10 +10,11 @@ const JWT_SECRET = process.env.JWT_SECRET || 'your_jwt_secret_key';
  * 验证用户是否已认证
  */
 export const authenticate = async (ctx: Context, next: Next) => {
+  console.log(`[Auth Middleware] Path: ${ctx.path} - Authenticate middleware called.`); // 添加日志
   try {
     // 从头部获取token
     const authHeader = ctx.headers.authorization;
-    
+    console.log(`[Auth Middleware] Authorization Header: ${authHeader}`); // 添加日志
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
       ctx.status = 401;
       ctx.body = errorResponse('未授权访问：缺少认证令牌', 401);

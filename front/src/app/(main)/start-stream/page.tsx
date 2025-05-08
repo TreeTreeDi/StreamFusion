@@ -6,14 +6,19 @@ import { motion, AnimatePresence } from 'framer-motion'; // Import motion and An
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+// import { useToast } from "@/components/ui/use-toast"; // Remove old toast
+import { toast } from "sonner" // Import sonner's toast
+import { createStreamSession } from '@/lib/api-service'; // Import the new API call
 
-const streamTypes = ['游戏', '音乐', '户外', '生活'];
+const streamTypes = ['游戏', '音乐', '户外', '生活']; // Make sure these names match Category names in DB or handle mapping
 
 export default function StartStreamPage() {
   const router = useRouter();
+  // const { toast } = useToast(); // Remove old toast hook
   const [currentStep, setCurrentStep] = useState(1);
   const [selectedType, setSelectedType] = useState<string>(streamTypes[0]);
   const [roomName, setRoomName] = useState('');
+  const [isLoading, setIsLoading] = useState(false); // For API call loading state
   const scrollContainerRef = useRef<HTMLUListElement>(null);
 
   // 滚动时自动选中中心项
@@ -56,13 +61,36 @@ export default function StartStreamPage() {
     }
 };
 
-  const handleStartStreaming = () => {
+  const handleStartStreaming = async () => {
     if (roomName.trim() === '') {
-      // Optionally show an error message
-      console.error("Room name cannot be empty.");
+      toast.error("直播间名称不能为空。");
       return;
     }
-    router.push(`/dashboard?roomName=${encodeURIComponent(roomName.trim())}&role=host`);
+    if (!selectedType) {
+      toast.error("请选择一个直播类型。");
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      // Call the backend API to create the stream session
+      const streamData = await createStreamSession({
+        title: roomName.trim(),
+        categoryName: selectedType, // Ensure this matches a Category name in your DB
+        // description: "Optional description here", // You can add a description field if needed
+      });
+
+      toast.success(`直播间 "${streamData.title}" 已成功创建！正在跳转到直播面板...`);
+      
+      // If successful, navigate to the dashboard
+      router.push(`/dashboard?roomName=${encodeURIComponent(streamData.title)}&role=host`); // Or use streamData.id if dashboard expects that
+
+    } catch (error: any) {
+      console.error("Failed to create stream session:", error);
+      toast.error(error.message || "创建直播失败：无法连接到服务器或发生未知错误。");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -174,8 +202,13 @@ export default function StartStreamPage() {
                  <Button variant="outline" onClick={() => setCurrentStep(1)} size="lg" className="px-8 py-3">
                     上一步
                  </Button>
-                <Button onClick={handleStartStreaming} size="lg" className="px-8 py-3 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700">
-                    开始直播
+                <Button
+                  onClick={handleStartStreaming}
+                  size="lg"
+                  className="px-8 py-3 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
+                  disabled={isLoading}
+                >
+                  {isLoading ? '正在创建...' : '开始直播'}
                 </Button>
              </div>
           )}

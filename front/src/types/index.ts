@@ -49,16 +49,24 @@ export interface StreamsResponse {
 
 export interface Stream {
   _id: string;
-  user: User | string;
+  user: User; // 假设后端 populate 后总是对象
   title: string;
   description?: string;
-  category?: Category | string;
+  category: Category; // 假设后端 populate 后总是对象
   tags?: string[];
-  thumbnail?: string;
+  thumbnailUrl?: string; // 与后端模型一致
   isLive: boolean;
   viewerCount: number;
-  startedAt?: string;
-  endedAt?: string;
+  startedAt?: string; // Date string
+  endedAt?: string;   // Date string
+  createdAt: string; // Date string
+  updatedAt: string; // Date string
+}
+
+// 为管理员获取直播列表定义响应类型
+export interface AdminStreamListResponse {
+  streams: Stream[];
+  pagination: Pagination;
 }
 
 export interface Banner {

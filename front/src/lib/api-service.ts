@@ -7,6 +7,14 @@ const axiosInstance = axios.create({
   baseURL: API_URL,
 });
 
+// Helper to get token, assuming it's stored in localStorage
+const getAuthToken = (): string | null => {
+  if (typeof window !== 'undefined') {
+    return localStorage.getItem('auth_token');
+  }
+  return null;
+};
+
 export const fetchCategories = async (): Promise<Category[]> => {
   try {
     const response = await fetch(`${API_URL}/categories`);
@@ -100,5 +108,37 @@ export const fetchPopularStreams = async (limit: number = 8): Promise<StreamsRes
   } catch (error) {
     console.error("获取热门直播时出错:", error);
     return { streams: [], pagination: { total: 0, page: 1, limit: 8, pages: 1 } };
+  }
+};
+
+interface CreateStreamSessionPayload {
+  title: string;
+  categoryName: string;
+  description?: string;
+}
+
+export const createStreamSession = async (payload: CreateStreamSessionPayload): Promise<Stream> => {
+  const token = getAuthToken();
+  if (!token) {
+    throw new Error('用户未认证，无法创建直播会话');
+  }
+
+  try {
+    const response = await axiosInstance.post('/streams/session', payload, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    const data: ApiResponse<Stream> = response.data;
+
+    if (!data.success || !data.data) {
+      console.error("创建直播会话失败:", data.message || data.error);
+      throw new Error(data.message || data.error || '创建直播会话失败');
+    }
+    return data.data;
+  } catch (error: any) {
+    console.error("创建直播会话时出错:", error.response?.data || error.message || error);
+    // Rethrow a more specific error or a generic one
+    throw new Error(error.response?.data?.message || error.message || '创建直播会话时发生网络或服务器错误');
   }
 };

@@ -14,7 +14,6 @@ import channelRoutes from './routes/channel.routes';
 import bannerRoutes from './routes/banner.routes';
 import streamRoutes from './routes/stream.routes';
 import tagRoutes from './routes/tag.routes';
-import srsRoutes from './routes/srs.routes';
 import livekitRoutes from './routes/livekit.routes';
 import adminUserRoutes from './routes/adminUser.routes'; // 导入管理员用户路由
 
@@ -70,7 +69,6 @@ app.use(channelRoutes.routes()).use(channelRoutes.allowedMethods({ throw: true }
 app.use(bannerRoutes.routes()).use(bannerRoutes.allowedMethods({ throw: true }));
 app.use(streamRoutes.routes()).use(streamRoutes.allowedMethods({ throw: true }));
 app.use(tagRoutes.routes()).use(tagRoutes.allowedMethods({ throw: true }));
-app.use(srsRoutes.routes()).use(srsRoutes.allowedMethods({ throw: true }));
 app.use(livekitRoutes.routes()).use(livekitRoutes.allowedMethods({ throw: true }));
 app.use(adminUserRoutes.routes()).use(adminUserRoutes.allowedMethods({ throw: true })); // 注册管理员用户路由
 
