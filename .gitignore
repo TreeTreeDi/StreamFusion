@@ -1,5 +1,3 @@
-.cursor/
-
 front/node_modules/
 front/.next/
 front/.env
