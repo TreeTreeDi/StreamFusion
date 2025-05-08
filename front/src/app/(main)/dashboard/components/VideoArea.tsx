@@ -1,7 +1,9 @@
 'use client';
-import React, { RefObject } from 'react';
+import React, { RefObject, useRef } from 'react'; // Added useRef
 import { RemoteParticipant, RemoteTrack, Track } from 'livekit-client';
 import ParticipantTrack from './ParticipantTrack';
+import DanmakuDisplay from './DanmakuDisplay'; // Import DanmakuDisplay
+import { ChatMessage } from '../hooks/useChat';   // Import ChatMessage
 
 // Props interface for VideoArea
 export interface VideoAreaProps {
@@ -11,6 +13,7 @@ export interface VideoAreaProps {
   participants: Map<string, RemoteParticipant>;
   tracks: Map<string, RemoteTrack[]>;
   role: 'host' | 'viewer'; // 添加 role 属性
+  chatMessages: ChatMessage[]; // Add chatMessages prop
 }
 
 export default function VideoArea({
@@ -20,7 +23,9 @@ export default function VideoArea({
   participants,
   tracks,
   role, // Destructure role from props
+  chatMessages, // Destructure chatMessages
 }: VideoAreaProps) {
+  const videoContainerRef = useRef<HTMLDivElement>(null); // Ref for video container height
 
   console.log('[VideoArea] Rendering. Role:', role);
   console.log('[VideoArea] Participants:', participants);
@@ -64,7 +69,7 @@ export default function VideoArea({
     <div className="flex-1 bg-black rounded flex flex-col"> {/* Changed background to black for video focus */}
 
       {/* Main Video Display Area */}
-      <div className="relative w-full aspect-video bg-black rounded overflow-hidden flex-shrink-0"> {/* Aspect ratio for video */}
+      <div ref={videoContainerRef} className="relative w-full aspect-video bg-black rounded overflow-hidden flex-shrink-0"> {/* Aspect ratio for video, add ref */}
         {role === 'host' ? (
           // Host sees their own preview large
           <>
@@ -97,6 +102,8 @@ export default function VideoArea({
             )}
           </>
         )}
+        {/* Danmaku Display - pass video container height */}
+        <DanmakuDisplay messages={chatMessages} videoHeight={videoContainerRef.current?.clientHeight} />
       </div>
 
       {/* Optional: Small Thumbnails/Grid for other participants (Hidden for now for simplicity) */}

@@ -201,6 +201,7 @@ export default function LiveKitTestPage() {
                isStreaming={isStreaming} // Pass state from useMediaControls
                isCamEnabled={isCamEnabled} // Pass state from useMediaControls
                role={selectedRole} // Pass current role from component state
+               chatMessages={chatMessages} // Pass chat messages for Danmaku display
              />
            ) : (
              <div className="flex items-center justify-center h-full text-gray-500">

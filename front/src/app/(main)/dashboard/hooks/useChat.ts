@@ -3,9 +3,10 @@ import { useState, useCallback, useEffect } from 'react';
 import { Room, RemoteParticipant, DataPacket_Kind } from 'livekit-client';
 
 // Define the structure of a chat message
-interface ChatMessage {
+export interface ChatMessage {
   identity: string;
   message: string;
+  timestamp?: number; // Add timestamp as optional for now
 }
 
 // Define the structure of the data payload
